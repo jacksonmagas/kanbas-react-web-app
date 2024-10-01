@@ -89,8 +89,8 @@ export default function DetailsEditor() {
         <tr>
             <td colSpan={2} style={{ textAlign: 'center' }}>
                 <hr />
-                <button>Cancel</button>
-                <button>Save</button><br /><br />
+                    <button>Cancel</button>
+                    <button>Save</button><br /><br />
                 <hr />
             </td>
         </tr>
