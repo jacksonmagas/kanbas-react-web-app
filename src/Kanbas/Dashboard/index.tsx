@@ -6,7 +6,7 @@ type CourseInfo = {
   img: string
 }
 
-function DefaultCourse(props :CourseInfo) {
+function DefaultCourse(props : CourseInfo) {
   return (
     <Link className="wd-dashboard-course-link"
                 to="/Kanbas/Courses/1234/Home">
