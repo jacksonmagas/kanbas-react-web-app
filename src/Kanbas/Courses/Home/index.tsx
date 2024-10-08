@@ -9,7 +9,9 @@ export default function Home() {
           <Modules />
         </td>
         <td valign="top">
-          <CourseStatus />
+          <div className="d-none d-md-block">
+            <CourseStatus />
+          </div>
         </td>
       </tr>
     </table>

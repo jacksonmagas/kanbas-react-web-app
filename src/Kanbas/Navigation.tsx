@@ -27,7 +27,7 @@ export default function KanbasNavigation() {
         className={linkStyle}>
         <AiOutlineDashboard className="fs-1 text-danger" /><br />
         Dashboard</NavLink>
-      <NavLink to="/Kanbas/Dashboard" id="wd-course-link"
+      <NavLink to="/Kanbas/Courses" id="wd-course-link"
         className={linkStyle}>
         <LiaBookSolid className="fs-1 text-danger" /><br />
         Courses</NavLink>
