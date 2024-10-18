@@ -1,100 +1,196 @@
-export default function DetailsEditor() {
+import React from "react";
+
+export default function DeatilsEditor() {
   return (
-    <div id="wd-details-editor">
-      <label htmlFor="wd-name">Quiz Name</label>
-      <input id="wd-name" value="A1 - ENV + HTML" /><br /><br />
-      <textarea id="wd-description">
-        The assignment is available online Submit a link to the landing page of
-      </textarea>
-      <br /><br />
-      <table>
-        <tr>
-          <td align="right" valign="top">
-            <label htmlFor="wd-type">Quiz type</label>
-          </td>
-          <td>
-            <select id="wd-group">
-              <option> Graded Quiz </option>
-              <option> Ungraded Quiz </option>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <td align="right" valign="top">
-            <label htmlFor="wd-group"> Assignment Group </label>
-          </td>
-          <td>
-            <select id="wd-group">
-              <option> ASSIGNMENTS </option>
-              <option> EXAMS </option>
-              <option> PROJECTS </option>
-            </select>
-            <br /><br />
-          </td>
-        </tr>
-        <tr>
-          <td align="right" valign="top">
-          </td>
-          <td>
-            <br /><br />
-            Options<br />
-            <input type="checkbox" id="wd-text-entry" name="entry-options" value="Shuffle Answers" />
-            <label htmlFor="wd-text-entry"> Shuffle Answers </label><br />
-            <input type="checkbox" id="wd-text-entry" name="entry-options" value="Time Limit" />
-            <label htmlFor="wd-text-entry"> Time Limit </label><br />
-            <input type="number" id="wd-time-limit-amt" />
-            <label htmlFor="wd-time-limit-amt"> Minutes </label>
-            <br />
-            <input type="checkbox" id="wd-text-entry" name="entry-options" value="Allow Multiple Attempts" />
-            <label htmlFor="wd-text-entry"> Allow Multiple Attempts </label><br />
-            <br /><br />
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Assign
-          </td>
-          <td>
-            <label htmlFor="wd-assign-to"> Assign to </label><br />
-            <input type="text" id="wd-assign-to" value="Everyone" />
-            <br /><br />
-          </td>
-        </tr>
-        <tr>
-          <td />
-          <td>
-            <label htmlFor="wd-due-date"> Due </label><br />
-            <input type="date" id="wd-due-date" />
-            <br /><br />
-            <table>
-              <tr>
-                <td>
-                  <label htmlFor="wd-available-from"> Available from </label>
-                </td>
-                <td>
-                  <label htmlFor="wd-available-until"> Until </label>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <input type="date" id="wd-available-from" />
-                </td>
-                <input type="date" id="wd-available-until" />
-                <td>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td colSpan={2} style={{ textAlign: 'center' }}>
-            <hr />
-            <button>Cancel</button>
-            <button>Save</button><br /><br />
-            <hr />
-          </td>
-        </tr>
-      </table>
+    <div className="container mt-4">
+      <h2>Edit Assignment</h2>
+      <form>
+        {/* Quiz Name */}
+        <div className="mb-3">
+          <label htmlFor="assignmentName" className="form-label">
+            Quiz Name
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="assignmentName"
+            defaultValue="A1"
+          />
+        </div>
+
+        {/* Quiz Instructions */}
+        <div className="mb-3">
+          <label htmlFor="description" className="form-label">
+            Quiz Instructions
+          </label>
+          <textarea
+            className="form-control"
+            id="description"
+            rows={5}
+            placeholder="The Quiz is available online..."
+          ></textarea>
+        </div>
+
+        {/* Quiz Type, Assignment Group,*/}
+        <div className="mb-3">
+          <label htmlFor="assignmentGroup" className="form-label">
+            {" "}
+            Quiz Type
+          </label>
+          <select
+            className="form-control"
+            id="assignmentGroup"
+            defaultValue="Assignments"
+          >
+            <option>Graded Quiz</option>
+            <option>Ungraded Quiz</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="assignmentGroup" className="form-label">
+            Assignment Group
+          </label>
+          <select
+            className="form-control"
+            id="assignmentGroup"
+            defaultValue="Assignments"
+          >
+            <option>ASSIGNMENTS</option>
+            <option>QUIZZE</option>
+            <option>Exams</option>
+          </select>
+        </div>
+
+       {/* Options Section */}
+<div className="row mb-3 justify-content-center">
+    <div className="col-md-8">
+        {/* Options Heading */}
+        <label htmlFor="options" className="form-label fw-bold d-block mb-2">Options</label>
+
+        {/* Shuffle Answers Option */}
+        <div className="form-check">
+            <input 
+                type="checkbox" 
+                className="form-check-input" 
+                id="shuffleAnswers" 
+            />
+            <label 
+                className="form-check-label" 
+                htmlFor="shuffleAnswers"
+            >
+                Shuffle Answers
+            </label>
+        </div>
+
+        {/* Time Limit Option */}
+        <div className="form-check mt-2 d-flex align-items-center">
+            <input 
+                type="checkbox" 
+                className="form-check-input" 
+                id="timeLimit" 
+            />
+            <label 
+                className="form-check-label me-2" 
+                htmlFor="timeLimit"
+            >
+                Time Limit
+            </label>
+            <input 
+                type="number" 
+                className="form-control" 
+                id="timeLimitMinutes" 
+                placeholder="" 
+                style={{ width: '80px' }} 
+            />
+            <span className="ms-2">Minutes</span>
+        </div>
+
+        {/* Allow Multiple Attempts Option */}
+        <div className="form-check mt-2">
+            <input 
+                type="checkbox" 
+                className="form-check-input" 
+                id="multipleAttempts" 
+            />
+            <label 
+                className="form-check-label" 
+                htmlFor="multipleAttempts"
+            >
+                Allow Multiple Attempts
+            </label>
+        </div>
+    </div>
+</div>
+        {/* Assign Section */}
+        <div className="row mb-3">
+          <div className="col-md-2">
+            <label htmlFor="assignTo" className="form-label">
+              Assign
+            </label>
+          </div>
+          <div className="col-md-8">
+            <div className="p-3 border">
+              {/* Assign to Section */}
+              <label htmlFor="assignTo" className="form-label">
+                Assign to
+              </label>
+              <input
+                type="text"
+                className="form-control mb-2"
+                id="assignTo"
+                defaultValue="Everyone"
+                readOnly
+              />
+
+              {/* Due Date Section */}
+              <label htmlFor="dueDate" className="form-label">
+                Due
+              </label>
+              <input type="date" className="form-control mb-2" id="dueDate" />
+
+              {/* Availability Section */}
+              <div className="row mt-3">
+                <div className="col-md-6">
+                  <label htmlFor="availableFrom" className="form-label">
+                    Available from
+                  </label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="availableFrom"
+                  />
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="until" className="form-label">
+                    Until
+                  </label>
+                  <input type="date" className="form-control" id="until" />
+                </div>
+              </div>
+
+              {/* Add Button Section */}
+<button className="btn btn-light mt-3 w-100">+ Add</button>
+</div>
+</div>
+</div>
+
+{/* Horizontal Lines */}
+<hr className="mt-4 mb-3" />
+
+{/* Buttons */}
+<div className="d-flex justify-content-center">
+  <button type="button" className="btn btn-secondary me-3">
+    Cancel
+  </button>
+  <button type="submit" className="btn btn-danger">
+    Save
+  </button>
+</div>
+
+{/* Horizontal Lines */}
+<hr className="mt-3" />
+      </form>
     </div>
   );
 }
