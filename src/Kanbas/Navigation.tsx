@@ -10,6 +10,14 @@ function linkStyle(props : NavLinkRenderProps) {
 }
 
 export default function KanbasNavigation() {
+  const links = [
+    { label: "Dashboard", path: "/Kanbas/Dashboard", icon: AiOutlineDashboard, iconColor: "text-danger"},
+    { label: "Courses",   path: "/Kanbas/Dashboard", icon: LiaBookSolid, iconColor: "text-danger"},
+    { label: "Calendar",  path: "/Kanbas/Calendar",  icon: IoCalendarOutline, iconColor: "text-danger" },
+    { label: "Inbox",     path: "/Kanbas/Inbox",     icon: FaInbox, iconColor: "text-danger" },
+    { label: "Labs",      path: "/Labs",             icon: LiaCogSolid, iconColor: "text-danger" },
+  ];
+
   return (
     <div id="wd-kanbas-navigation" style={{ width: 110 }}
       className="list-group rounded-0 position-fixed bottom-0 top-0 d-none d-md-block bg-black z-2">
