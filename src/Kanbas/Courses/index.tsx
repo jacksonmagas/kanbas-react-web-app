@@ -1,5 +1,5 @@
 import CoursesNavigation from "./Navigation";
-import {Routes, Route, Navigate} from "react-router";
+import { Routes, Route, Navigate } from "react-router";
 import Modules from "./Modules";
 import Home from "./Home";
 import Assignments from "./Assignments";
@@ -7,13 +7,14 @@ import AssignmentEditor from "./Assignments/Editor";
 import Quizzes from "./Quizzes";
 import { FaAlignJustify } from "react-icons/fa6";
 import PeopleTable from "./People/Table";
+import DetailsEditor from "./Quizzes/DetailsEditor";
 
 export default function Courses() {
   return (
     <div id="wd-courses">
       <h2 className="text-danger">
         <FaAlignJustify className="me-4 fs-4 mb-1" />
-        Course 1234</h2>  
+        Course 1234</h2>
       <hr />
       <div className="d-flex">
         <div className="d-none d-md-block">
@@ -27,9 +28,11 @@ export default function Courses() {
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentEditor />} />
             <Route path="Quizzes" element={<Quizzes />} />
+            <Route path="Quizzes/:aid" element={<DetailsEditor />} />
             <Route path="People" element={<PeopleTable />} />
           </Routes>
         </div>
       </div>
     </div>
-);}
+  );
+}
