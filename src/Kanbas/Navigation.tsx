@@ -1,4 +1,4 @@
-import { NavLink, NavLinkRenderProps } from "react-router-dom";
+import { NavLink, NavLinkRenderProps, useLocation } from "react-router-dom";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { IoCalendarOutline } from "react-icons/io5";
 import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
@@ -10,7 +10,9 @@ function linkStyle(props : NavLinkRenderProps) {
 }
 
 export default function KanbasNavigation() {
+  const {pathname} = useLocation();
   const links = [
+    { label: "Account", path: "/Kanbas/Account", icon: FaRegCircleUser, iconColor: "text-white"},
     { label: "Dashboard", path: "/Kanbas/Dashboard", icon: AiOutlineDashboard, iconColor: "text-danger"},
     { label: "Courses",   path: "/Kanbas/Dashboard", icon: LiaBookSolid, iconColor: "text-danger"},
     { label: "Calendar",  path: "/Kanbas/Calendar",  icon: IoCalendarOutline, iconColor: "text-danger" },
@@ -24,32 +26,12 @@ export default function KanbasNavigation() {
       <a href="https://www.northeastern.edu/" id="wd-neu-link" target="_blank"
         className="list-group-item text-center border-0 bg-black">
         <img src="/images/NEU.png" width="75px" /></a>
-      <NavLink to="/Kanbas/Account" id="wd-account-link"
-        className={linkStyle}>
-        {props => (<>
-        <FaRegCircleUser className={"fs-1 text z-3 text" + (props.isActive ? " text-danger" : " text-white")}/>
-        <br/>
-        Account</>)}
+      {links.map((link) => (
+        <NavLink key={link.path} to={link.path} className={linkStyle}>
+          {link.icon({className: `fs-1 ${pathname.includes("Account") ? "text-danger" : link.iconColor}`})}
+          <br/>
+          {link.label}
         </NavLink>
-      <NavLink to="/Kanbas/Dashboard" id="wd-dashboard-link"
-        className={linkStyle}>
-        <AiOutlineDashboard className="fs-1 text-danger" /><br />
-        Dashboard</NavLink>
-      <NavLink to="/Kanbas/Courses" id="wd-course-link"
-        className={linkStyle}>
-        <LiaBookSolid className="fs-1 text-danger" /><br />
-        Courses</NavLink>
-      <NavLink to="/Kanbas/Calendar" id="wd-calendar-link"
-        className={linkStyle}>
-        <IoCalendarOutline className="fs-1 text-danger" /><br />
-        Calendar</NavLink>
-      <NavLink to="/Kanbas/Inbox" id="wd-inbox-link"
-        className={linkStyle}>
-        <FaInbox className="fs-1 text-danger" /><br />
-        Inbox</NavLink>
-      <NavLink to="/Labs" id="wd-labs-link"
-        className={linkStyle}>
-        <LiaCogSolid className="fs-1 text-danger"/><br />
-        Labs</NavLink>
+      ))}
     </div>
 );}
