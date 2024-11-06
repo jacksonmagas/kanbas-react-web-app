@@ -5,9 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 const dateObjectToHtmlDateString = (date: Date) => {
     return `${date.getFullYear()}-${date.getMonth() + 1 < 10 ? 0 : ""}${
       date.getMonth() + 1
-    }-${date.getDate() + 1 < 10 ? 0 : ""}${date.getDate() + 1}`;
+    }-${date.getDate() + 1 < 10 ? 0 : ""}${date.getDate()}`;
   };
-
 
 export default function AssignmentEditor() {
   const { pathname } = useLocation();
@@ -128,10 +127,10 @@ export default function AssignmentEditor() {
         <hr/>
       </div>
       <div className="float-end mt-4">
+        <a href={`#/Kanbas/Courses/${cid}/Assignments`} className="text-decoration-none">
         <button className="btn btn-secondary border-secondary me-2">
           Cancel
         </button>
-        <a href={`#/Kanbas/Courses/${cid}/Assignments`} className="text-decoration-none">
         <button className="btn btn-danger border-danger"
                 onClick={() => dispatch(pathname.includes("new-assignment") ? addAssignment(assignment) : updateAssignment(assignment))}>
           Save

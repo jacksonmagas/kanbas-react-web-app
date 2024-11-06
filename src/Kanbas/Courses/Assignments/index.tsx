@@ -20,9 +20,10 @@ function AssignmentPanel({_id, course, name, stday, sttime, dueday, duetime, pts
         </a>
         <br />
         <span className="text-danger"> Multiple Modules </span> | <strong> Not available until </strong>
-        {new Date(stday).toDateString()} at {sttime} |
+        {new Date(stday + "T00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) + " at " + sttime} |
         <br/>
-        <strong> Due </strong> {new Date(dueday).toDateString()} at {duetime} | {pts}pts
+        <strong> Due </strong>
+        {new Date(dueday + "T00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) + " at " + duetime} | {pts}pts
       </div>
       <div className="flex-end">
         <GreenCheckmark />
