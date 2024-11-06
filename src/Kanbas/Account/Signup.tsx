@@ -11,6 +11,5 @@ export default function Signup() {
       <Link  id="wd-signin-btn"
              to="/Kanbas/Dashboard"
              className="btn btn-primary w-100 mb-2"> Sign up </Link>
-      <Link  id="wd-signin-link" to="/Kanbas/Account/Signup">Sign in</Link>
     </div>
 );}
