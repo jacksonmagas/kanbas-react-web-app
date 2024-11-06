@@ -4,6 +4,7 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { MdArrowDropDown, MdEditDocument } from "react-icons/md";
 import { IoEllipsisVertical } from "react-icons/io5";
 import GreenCheckmark from "../Modules/GreenCheckmark";
+import { useSelector } from "react-redux";
 
 type Assignment = {
   name : string,
@@ -38,6 +39,8 @@ function Assignment(prop :Assignment) {
 }
 
 export default function Assignments() {
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const isFaculty = currentUser.role === "FACULTY";
   return (
     <div id="wd-assignments" className="ms-1">
       <div className="d-flex mb-1 align-items-center">
@@ -45,14 +48,14 @@ export default function Assignments() {
         <input id="wd-search-assignment"
               className="form-control me-5 px-5 border-secondary"
               placeholder="Search..." />
-        <button id="wd-add-assignment-group" className="btn btn-secondary d-flex me-1">
+        {isFaculty && <button id="wd-add-assignment-group" className="btn btn-secondary d-flex me-1">
           <BsPlus className="fs-4" />
           Group
-        </button>
-        <button id="wd-add-assignment" className="btn btn-danger d-flex flex-end">
+        </button>}
+        {isFaculty && <button id="wd-add-assignment" className="btn btn-danger d-flex flex-end">
           <BsPlus className="fs-4" />
           Assignment
-        </button>
+        </button>}
       </div>
       <div className="wd-title p-3 ps-2 bg-secondary d-flex align-items-center rounded-0">
         <div className="flex-begin">
@@ -64,9 +67,9 @@ export default function Assignments() {
         </div>
         <div className="flex-end flex">
           <span className="border border-dark rounded-pill px-2 py-2">40% of Total</span>
-          <button className="btn">
+          {isFaculty && <button className="btn">
             <BsPlus className="fs-4" />
-          </button>
+          </button>}
           <IoEllipsisVertical className="fs-4" />
         </div>
       </div>

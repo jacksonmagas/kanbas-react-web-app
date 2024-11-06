@@ -1,2 +1,5 @@
 import courses from "./courses.json"
-export {courses};
+import modules from "./modules.json"
+import users from "./users.json"
+import enrollments from "./enrollments.json"
+export {courses, modules, users, enrollments};

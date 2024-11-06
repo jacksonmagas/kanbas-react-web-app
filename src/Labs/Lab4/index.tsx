@@ -12,7 +12,6 @@ import PassingDataOnEvent from "./PassingDataOnEvent";
 import PassingFunctions from "./PassingFunctions";
 import StringStateVariables from "./StringStateVariable";
 
-
 export default function Lab4() {
     const sayHello = () => alert("Hello");
     return (
