@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useKanbasDispatch, useKanbasSelector } from "../hooks";
 import { Course } from ".";
 import { User } from "./Account/reducer";
-import { addEnrollment, deleteEnrollment } from "./reducer";
+import { addEnrollment, deleteEnrollment, setEnrollments } from "./reducer";
+import * as client from "./client";
 
 function NewCourse({ addNewCourse,
   updateCourse, setCourse, course }: {
@@ -54,14 +55,22 @@ export default function Dashboard(
 ) {
   const { currentUser } = useKanbasSelector(state => state.accountReducer);
   const { enrollments } = useKanbasSelector(state => state.enrollmentsReducer);
+
+  const fetchEnrollments = async () => {
+    try {
+      const enrollments = await client.getEnrollments(currentUser?._id ?? "");
+      dispatch(setEnrollments(enrollments));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  useEffect(() => {
+    fetchEnrollments();
+  }, [enrollments]);
+  const isEnrolled = (course: Course) => {
+    return enrollments.some((e) => e.course === course._id);
+  }
   const dispatch = useKanbasDispatch();
-  const isEnrolled = (course : Course) =>
-                  enrollments.some(
-                    (enrollment) =>
-                      currentUser && enrollment.user === currentUser._id &&
-                      enrollment.course === course._id
-                    );
-  const enrolledCorses = courses.filter(isEnrolled);
   let [enrollmentSwitch, setEnrollmentSwitch] = useState(true);
   return (
     <div id="wd-dashboard">
@@ -71,11 +80,12 @@ export default function Dashboard(
         onClick={() => setEnrollmentSwitch(!enrollmentSwitch)}> Enrollments </button>}
       <h2 id="wd-dashboard-published">
         {currentUser && isFaculty(currentUser) ? "Published " : enrollmentSwitch ? "Enrolled " : "All "}
-        Courses ({(enrollmentSwitch ? enrolledCorses : courses).length})
+        Courses ({!enrollmentSwitch ? courses.length : courses.filter(isEnrolled).length})
         </h2> <hr />
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4">
-          {(enrollmentSwitch ? enrolledCorses : courses)
+          {courses
+            .filter((course) => !enrollmentSwitch || isEnrolled(course))
             .map((course) => (
               <div className="wd-dashboard-course col" style={{ width: "300px" }}>
                 <div className="card rounded-3 overflow-hidden">
@@ -106,14 +116,19 @@ export default function Dashboard(
                       {currentUser && isStudent(currentUser) && !enrollmentSwitch && <button id="wd-enrollment-course-click"
                         onClick={(event) => {
                           event.preventDefault();
-                          const enrollment = enrollments.find((e) => e.course === course._id && e.user === currentUser._id)
+                          const enrollment = enrollments.find((e) => e.course === course._id)
                                           ?? {
                                             course: course._id,
                                             user: currentUser._id,
                                             _id: new Date().getTime().toString()
                                           };
-                          dispatch(isEnrolled(course) ? deleteEnrollment(enrollment) : addEnrollment(enrollment));
-                        }}
+                        if (isEnrolled(course)) {
+                          client.unenroll(currentUser._id, course._id);
+                          dispatch(deleteEnrollment(enrollment));
+                        } else {
+                          client.enroll(currentUser._id, course._id);
+                          dispatch(addEnrollment(enrollment));
+                        }}}
                         className={`btn ${isEnrolled(course) ? "btn-danger" : "btn-success"} me-2 float-end`} >
                         {isEnrolled(course) ? "Unenroll" : "Enroll"}
                       </button>}

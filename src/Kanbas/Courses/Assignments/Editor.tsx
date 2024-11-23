@@ -1,6 +1,8 @@
 import { useLocation, useParams } from "react-router";
 import { addAssignment, editAssignment, updateAssignment, deleteAssignment, Assignment } from "./reducer";
 import { useDispatch, useSelector } from "react-redux";
+import * as assignmentClient from "./client"
+import * as coursesClient from "../client"
 
 const dateObjectToHtmlDateString = (date: Date) => {
     return `${date.getFullYear()}-${date.getMonth() + 1 < 10 ? 0 : ""}${
@@ -8,11 +10,22 @@ const dateObjectToHtmlDateString = (date: Date) => {
     }-${date.getDate() + 1 < 10 ? 0 : ""}${date.getDate()}`;
   };
 
+async function saveAssignment(assignment: Assignment, cid: string, dispatch: any, pathname: string) {
+  if (pathname.includes("new-assignment")) {
+    await coursesClient.createAssignmentForCourse(cid ?? "", assignment)
+    dispatch(addAssignment(assignment))
+  } else {
+    await assignmentClient.updateAssignment(assignment)
+    dispatch(updateAssignment(assignment));
+  }
+}
+
 export default function AssignmentEditor() {
   const { pathname } = useLocation();
   const { cid, aid } = useParams();
-  let assignment : Assignment = useSelector((state: any) => state.assignmentsReducer).assignments.find((a :Assignment) => a._id === aid);
   const dispatch = useDispatch();
+  let assignment : Assignment = useSelector((state: any) => state.assignmentsReducer)
+    .assignments.find((a :Assignment) => a._id === aid);
   if (!cid) {
     return (
       <div>
@@ -132,7 +145,7 @@ export default function AssignmentEditor() {
           Cancel
         </button>
         <button className="btn btn-danger border-danger"
-                onClick={() => dispatch(pathname.includes("new-assignment") ? addAssignment(assignment) : updateAssignment(assignment))}>
+                onClick={() => saveAssignment(assignment, cid, dispatch, pathname)}>
           Save
         </button></a>
       </div>
