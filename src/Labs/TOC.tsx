@@ -53,6 +53,11 @@ export default function TOC() {
           Server Github
         </a>
       </li>
+      <li className="nav-item">
+        <a id="wd-k" href="https://kanbas-node-server-app-ii0r.onrender.com/" className="nav-link">
+          Remote Server
+        </a>
+      </li>
     </ul>
   );
 }
