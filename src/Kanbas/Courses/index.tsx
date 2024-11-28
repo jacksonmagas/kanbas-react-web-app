@@ -8,6 +8,8 @@ import Quizzes from "./Quizzes";
 import { FaAlignJustify } from "react-icons/fa6";
 import PeopleTable from "./People/Table";
 import DetailsEditor from "./Quizzes/DetailsEditor";
+import Details from "./Quizzes/Details";
+import QuizPreview from "./Quizzes/QuizPreview";
 
 export default function Courses() {
   return (
@@ -28,7 +30,9 @@ export default function Courses() {
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentEditor />} />
             <Route path="Quizzes" element={<Quizzes />} />
-            <Route path="Quizzes/:aid" element={<DetailsEditor />} />
+            <Route path="Quizzes/:aid" element={<Details />} />
+            <Route path="Quizzes/:aid/edit" element={<DetailsEditor />} />
+            <Route path="Quizzes/:aid/preview" element={<QuizPreview />} />
             <Route path="People" element={<PeopleTable />} />
           </Routes>
         </div>
