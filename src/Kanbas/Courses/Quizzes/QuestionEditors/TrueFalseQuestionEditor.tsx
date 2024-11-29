@@ -1,122 +1,117 @@
 import React, { useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const TrueFalseQuestionEditor: React.FC = () => {
-  const [title, setTitle] = useState<string>("");
-  const [points, setPoints] = useState<number>(0);
   const [question, setQuestion] = useState<string>("");
-  const [isTrue, setIsTrue] = useState<boolean>(true);
+  const [correctAnswer, setCorrectAnswer] = useState<boolean | null>(null);
 
-  // Handles input changes for the title
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setTitle(e.target.value);
+  const handleQuestionChange = (value: string): void => {
+    setQuestion(value); 
   };
 
-  // Handles input changes for the points
-  const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setPoints(Number(e.target.value));
-  };
-
-  // Handles input changes for the question
-  const handleQuestionChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
-    setQuestion(e.target.value);
-  };
-
-  // Handles form submission
   const handleSave = (): void => {
+    if (!question || correctAnswer === null) {
+      alert("Please fill in the question and select the correct answer.");
+      return;
+    }
+
     const questionData = {
-      title,
-      points,
       question,
-      correctAnswer: isTrue ? "True" : "False",
+      correctAnswer,
     };
     console.log("Saved Question:", questionData);
     alert("Question saved successfully!");
   };
 
-  // Handles cancel action
   const handleCancel = (): void => {
-    setTitle("");
-    setPoints(0);
     setQuestion("");
-    setIsTrue(true);
+    setCorrectAnswer(null);
   };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Arial, sans-serif" }}>
-      <h2>True/False Question Editor</h2>
-      <label>
-        Title:
-        <input
-          type="text"
-          value={title}
-          onChange={handleTitleChange}
-          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
-        />
-      </label>
-      <label>
-        Points:
-        <input
-          type="number"
-          value={points}
-          onChange={handlePointsChange}
-          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
-        />
-      </label>
-      <label>
-        Question:
-        <textarea
+    <div style={{ width: "100%", fontFamily: "Arial, sans-serif" }}>
+      <div style={{ marginBottom: "20px", padding: "10px", backgroundColor: "#f9f9f9", borderRadius: "5px" }}>
+        <p>
+          Enter your question text, then select if True or False is the correct answer.
+        </p>
+        <label>
+          <strong>Question:</strong>
+        </label>
+        <div style={{ marginTop: "10px", color: "#888" }}>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Insert</span>
+            <span>Format</span>
+            <span>Tools</span>
+            <span>Table</span>
+          </div>
+        </div>
+        <ReactQuill
           value={question}
           onChange={handleQuestionChange}
-          style={{ display: "block", width: "100%", height: "100px", marginBottom: "10px", padding: "8px" }}
+          style={{
+            marginTop: "10px",
+            backgroundColor: "white",
+            width: "100%", 
+            minHeight: "90px",
+          }}
         />
-      </label>
-      <div>
-        <h3>Answer:</h3>
-        <label>
-          <input
-            type="radio"
-            name="trueFalse"
-            value="True"
-            checked={isTrue}
-            onChange={() => setIsTrue(true)}
-            style={{ marginRight: "8px" }}
-          />
-          True
-        </label>
-        <label style={{ marginLeft: "20px" }}>
-          <input
-            type="radio"
-            name="trueFalse"
-            value="False"
-            checked={!isTrue}
-            onChange={() => setIsTrue(false)}
-            style={{ marginRight: "8px" }}
-          />
-          False
-        </label>
       </div>
       <div style={{ marginTop: "20px" }}>
+        <h3>Answers:</h3>
+        <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+          <label style={{ marginRight: "10px", fontWeight: correctAnswer === true ? "bold" : "normal", color: correctAnswer === true ? "green" : "black" }}>
+            <input
+              type="radio"
+              name="correctAnswer"
+              value="true"
+              checked={correctAnswer === true}
+              onChange={() => setCorrectAnswer(true)}
+              style={{ marginRight: "5px" }}
+            />
+            True
+          </label>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+          <label style={{ marginRight: "10px", fontWeight: correctAnswer === false ? "bold" : "normal", color: correctAnswer === false ? "green" : "black" }}>
+            <input
+              type="radio"
+              name="correctAnswer"
+              value="false"
+              checked={correctAnswer === false}
+              onChange={() => setCorrectAnswer(false)}
+              style={{ marginRight: "5px" }}
+            />
+            False
+          </label>
+        </div>
+      </div>
+      <div style={{ marginTop: "30px", textAlign: "left" }}>
         <button
           onClick={handleSave}
           style={{
             padding: "10px 15px",
             marginRight: "10px",
-            backgroundColor: "#4CAF50",
+            backgroundColor: "#f44336", 
             color: "white",
             border: "none",
             borderRadius: "5px",
+            cursor: "pointer",
           }}
         >
-          Save/Update Question
+          Update Question
         </button>
         <button
           onClick={handleCancel}
           style={{
             padding: "10px 15px",
-            backgroundColor: "#f44336",
-            color: "white",
+            backgroundColor: "#D3D3D3", 
+            color: "black",
             border: "none",
             borderRadius: "5px",
+            cursor: "pointer",
           }}
         >
           Cancel

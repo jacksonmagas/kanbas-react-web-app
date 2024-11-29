@@ -10,6 +10,7 @@ import { IoEllipsisVertical } from "react-icons/io5";
 import QuizIcon from "./QuizIcon";
 import QuestionsEditor from "./QuestionsEditor";
 import { FacultyView } from "../../Account/RoleShownContent";
+import QuestionEditor from "./QuestionEditors";
 // import AssignmentControlButtons from "./AssignmentControlButtons";
 
 export default function Quizzes() {
@@ -179,6 +180,7 @@ export default function Quizzes() {
           </li>
         </ul>
       </div>
+      <QuestionEditor />
     </div>
   );
 }

@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; 
+import { FaTrash } from "react-icons/fa";
 
 type Answer = {
   text: string;
@@ -10,51 +13,49 @@ const FillInTheBlankEditor: React.FC = () => {
   const [question, setQuestion] = useState<string>("");
   const [answers, setAnswers] = useState<Answer[]>([{ text: "" }]);
 
-  // Handles input changes for the title
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setTitle(e.target.value);
   };
 
-  // Handles input changes for the points
   const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setPoints(Number(e.target.value));
   };
 
-  // Handles input changes for the question
-  const handleQuestionChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
-    setQuestion(e.target.value);
+  const handleQuestionChange = (value: string): void => {
+    setQuestion(value); 
   };
 
-  // Handles adding a new answer
   const addAnswer = (): void => {
     setAnswers([...answers, { text: "" }]);
   };
 
-  // Handles removing an answer
   const removeAnswer = (index: number): void => {
     setAnswers(answers.filter((_, i) => i !== index));
   };
 
-  // Handles updating an answer's text
   const handleAnswerTextChange = (index: number, value: string): void => {
     const updatedAnswers = [...answers];
     updatedAnswers[index].text = value;
     setAnswers(updatedAnswers);
   };
 
-  // Handles form submission
   const handleSave = (): void => {
+    const trimmedAnswers = answers.map((a) => a.text.trim()).filter((a) => a !== "");
+    if (!title || !question || trimmedAnswers.length === 0) {
+      alert("Please fill in all fields before saving.");
+      return;
+    }
+
     const questionData = {
       title,
       points,
       question,
-      possibleAnswers: answers.map((answer) => answer.text),
+      possibleAnswers: trimmedAnswers,
     };
     console.log("Saved Question:", questionData);
     alert("Question saved successfully!");
   };
 
-  // Handles cancel action
   const handleCancel = (): void => {
     setTitle("");
     setPoints(0);
@@ -63,77 +64,106 @@ const FillInTheBlankEditor: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Arial, sans-serif" }}>
-      <h2>Fill in the Blank Question Editor</h2>
-      <label>
-        Title:
-        <input
-          type="text"
-          value={title}
-          onChange={handleTitleChange}
-          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
-        />
-      </label>
-      <label>
-        Points:
-        <input
-          type="number"
-          value={points}
-          onChange={handlePointsChange}
-          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
-        />
-      </label>
-      <label>
-        Question:
-        <textarea
+    <div style={{ width: "100%", fontFamily: "Arial, sans-serif" }}>
+      <div style={{ marginBottom: "20px", padding: "10px", backgroundColor: "#f9f9f9", borderRadius: "5px" }}>
+      <p>
+      Enter your question text, then define all possible correct answers for the blank. Students will see the question followed by a small text box to type their answer.
+        </p>
+        <label>
+          <strong>Question:</strong>
+        </label>
+        <div style={{ marginTop: "10px", color: "#888" }}>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Insert</span>
+            <span>Format</span>
+            <span>Tools</span>
+            <span>Table</span>
+          </div>
+        </div>
+        <ReactQuill
           value={question}
           onChange={handleQuestionChange}
-          style={{ display: "block", width: "100%", height: "100px", marginBottom: "10px", padding: "8px" }}
+          style={{
+            marginTop: "10px",
+            backgroundColor: "white",
+            width: "100%", 
+            minHeight: "90px",
+          }}
         />
-      </label>
-      <div>
+      </div>
+      <div style={{ marginTop: "20px" }}>
         <h3>Answers:</h3>
         {answers.map((answer, index) => (
-          <div key={index} style={{ marginBottom: "10px" }}>
+          <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
             <input
               type="text"
               value={answer.text}
               onChange={(e) => handleAnswerTextChange(index, e.target.value)}
-              style={{ width: "80%", marginRight: "10px", padding: "8px" }}
+              placeholder={`Possible Answer ${index + 1}`}
+              style={{
+                flexGrow: 1,
+                padding: "10px",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+                marginRight: "10px",
+              }}
             />
             {answers.length > 1 && (
-              <button onClick={() => removeAnswer(index)} style={{ padding: "5px 10px" }}>
-                Remove
+              <button
+                onClick={() => removeAnswer(index)}
+                style={{
+                  color: "#808080",
+                  border: "none",
+                  background: "none",
+                  cursor: "pointer",
+                  fontSize: "16px",
+                }}
+              >
+                🗑️ {/* Trash icon */}
               </button>
             )}
           </div>
         ))}
-        <button onClick={addAnswer} style={{ padding: "10px 15px", marginTop: "10px" }}>
+        <button
+          onClick={addAnswer}
+          style={{
+            color: "red",
+            background: "none", 
+            border: "none",
+            cursor: "pointer",
+            fontSize: "16px",
+            marginTop: "10px",
+          }}
+        >
           + Add Another Answer
         </button>
       </div>
-      <div style={{ marginTop: "20px" }}>
+      <div style={{ marginTop: "30px", textAlign: "left" }}>
         <button
           onClick={handleSave}
           style={{
             padding: "10px 15px",
             marginRight: "10px",
-            backgroundColor: "#4CAF50",
+            backgroundColor: "#f44336", 
             color: "white",
             border: "none",
             borderRadius: "5px",
+            cursor: "pointer",
           }}
         >
-          Save/Update Question
+          Update Question
         </button>
         <button
           onClick={handleCancel}
           style={{
             padding: "10px 15px",
-            backgroundColor: "#f44336",
-            color: "white",
+            backgroundColor: "#D3D3D3",
+            color: "black",
             border: "none",
             borderRadius: "5px",
+            cursor: "pointer",
           }}
         >
           Cancel
