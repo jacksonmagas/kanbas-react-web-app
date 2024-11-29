@@ -8,11 +8,13 @@ import Quizzes from "./Quizzes";
 import { FaAlignJustify } from "react-icons/fa6";
 import PeopleTable from "./People/Table";
 import DetailsEditor from "./Quizzes/DetailsEditor";
+import Details from "./Quizzes/Details";
+import QuizPreview from "./Quizzes/QuizPreview";
 import { useKanbasSelector } from "../../hooks";
 import { FacultyView } from "../Account/RoleShownContent";
 import { BiGlasses } from "react-icons/bi";
 
-export default function Courses({courses}: {courses: any[]; }) {
+export default function Courses({ courses }: { courses: any[]; }) {
   const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
   return (
@@ -40,7 +42,9 @@ export default function Courses({courses}: {courses: any[]; }) {
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentEditor />} />
             <Route path="Quizzes" element={<Quizzes />} />
-            <Route path="Quizzes/:aid" element={<DetailsEditor />} />
+            <Route path="Quizzes/:aid" element={<Details />} />
+            <Route path="Quizzes/:aid/edit" element={<DetailsEditor />} />
+            <Route path="Quizzes/:aid/preview" element={<QuizPreview />} />
             <Route path="People" element={<PeopleTable />} />
           </Routes>
         </div>
