@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+
 function QuestionEditor() {
     return (
         <div>
@@ -17,14 +19,4 @@ function QuestionEditor() {
     )
 }
 
-function MultipleChoiceEditor() {
 
-}
-
-function TrueFalseEditor() {
-
-}
-
-function FillInTheBlankEditor() {
-
-}
