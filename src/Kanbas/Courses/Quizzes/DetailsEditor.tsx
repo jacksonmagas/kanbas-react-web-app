@@ -17,7 +17,6 @@ export default function DeatilsEditor() {
             defaultValue="A1"
           />
         </div>
-
         {/* Quiz Instructions */}
         <div className="mb-3">
           <label htmlFor="description" className="form-label">

@@ -1,5 +1,3 @@
-
-
 import { BsGripVertical, BsPlus } from "react-icons/bs";
 import LessonControlButtons from "../Modules/LessonControlButtons";
 // import ModulesControlButtons from "../Modules/ModulesControlButtons";
@@ -11,9 +9,8 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { IoEllipsisVertical } from "react-icons/io5";
 import QuizIcon from "./QuizIcon";
 import QuestionsEditor from "./QuestionsEditor";
+import { FacultyView } from "../../Account/RoleShownContent";
 // import AssignmentControlButtons from "./AssignmentControlButtons";
-
-
 
 export default function Quizzes() {
   return (
@@ -23,13 +20,21 @@ export default function Quizzes() {
           <input id="wd-search-assignment"
             className="form-control me-5  border-secondary"
             placeholder="Search for Quiz" />
-          <button id="wd-add-quizzes" className="btn btn-danger d-flex flex-end me-2">
-            <BsPlus className="fs-4" />
-            Quiz
-          </button>
-          <button id="wd-add-quizzes-group" className="btn btn-secondary d-flex me-1">
-            <IoEllipsisVertical className="fs-4" />
-          </button>
+          <FacultyView>
+            <button id="wd-add-quizzes" className="btn btn-danger d-flex flex-end me-2">
+              <BsPlus className="fs-4" />
+              Quiz
+            </button>
+          </FacultyView>
+          <div className="dropdown d-flex me-1">
+            <button id="wd-add-quizzes-group" className="btn btn-secondary" type="button" data-bs-toggle="dropdown">
+              <IoEllipsisVertical className="fs-4" />
+            </button>
+            <ul className="dropdown-menu">
+              <li className="dropdown-item"> Options </li>
+              <li className="dropdown-item"> More Options </li>
+            </ul>
+          </div>
         </div>
         < hr />
 
