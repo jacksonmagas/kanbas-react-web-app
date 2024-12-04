@@ -180,6 +180,7 @@ export default function Quizzes() {
           </li>
         </ul>
       </div>
+      <QuestionEditor />
     </div>
   );
 }
