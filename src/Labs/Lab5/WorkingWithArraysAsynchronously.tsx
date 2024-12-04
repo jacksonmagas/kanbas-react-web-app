@@ -7,19 +7,19 @@ export default function WorkingWithArraysAsynchronously() {
   const [todos, setTodos] = useState<any[]>([]);
   const [errorMessage, setErrorMessage] = useState(null);
   const fetchTodos = async () => {
-    const todos = await client.fetchTodos();
+    const todos :any = await client.fetchTodos();
     setTodos(todos);
   };
   useEffect(() => {
     fetchTodos();
   }, []);
   const removeTodo = async (todo: any) => {
-    const updatedTodos = await client.removeTodo(todo);
+    const updatedTodos :any = await client.removeTodo(todo);
     setTodos(updatedTodos);
   };
 
   const createTodo = async () => {
-    const todos = await client.createTodo();
+    const todos :any = await client.createTodo();
     setTodos(todos);
   };
 

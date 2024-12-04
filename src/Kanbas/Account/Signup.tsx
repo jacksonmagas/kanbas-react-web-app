@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as client from "./client";
 import { useDispatch } from "react-redux";
-import { setCurrentUser } from "./reducer";
+import { isUser, setCurrentUser } from "./reducer";
 
 export default function Signup() {
   const [user, setUser] = useState<any>({});
@@ -10,8 +10,10 @@ export default function Signup() {
   const dispatch = useDispatch();
   const signup = async () => {
     const currentUser = await client.signup(user);
-    dispatch(setCurrentUser(currentUser));
-    navigate("/Kanbas/Account/Profile");
+    if (isUser(currentUser) || currentUser === null) {
+      dispatch(setCurrentUser(currentUser));
+      navigate("/Kanbas/Account/Profile");
+    }
   };
 
   return (

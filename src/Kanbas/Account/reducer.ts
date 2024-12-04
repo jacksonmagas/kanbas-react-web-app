@@ -15,6 +15,25 @@ export interface User {
     totalActivity: string;
 }
 
+export function isUser(value: unknown): value is User {
+    return (
+        typeof value === 'object' &&
+        value !== null &&
+        typeof (value as User)._id === 'string' &&
+        typeof (value as User).username === 'string' &&
+        typeof (value as User).password === 'string' &&
+        typeof (value as User).firstName === 'string' &&
+        typeof (value as User).lastName === 'string' &&
+        typeof (value as User).email === 'string' &&
+        typeof (value as User).dob === 'string' &&
+        typeof (value as User).role === 'string' &&
+        typeof (value as User).loginId === 'string' &&
+        typeof (value as User).section === 'string' &&
+        typeof (value as User).lastActivity === 'string' &&
+        typeof (value as User).totalActivity === 'string'
+    );
+}
+
 const initialState : {currentUser: User | null} = {
   currentUser: null,
 };

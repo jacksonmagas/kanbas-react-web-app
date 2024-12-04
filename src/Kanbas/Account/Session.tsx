@@ -1,6 +1,6 @@
 import * as client from "./client";
 import { useEffect, useState } from "react";
-import { setCurrentUser } from "./reducer";
+import { isUser, setCurrentUser } from "./reducer";
 import { useDispatch } from "react-redux";
 export default function Session({ children }: { children: any }) {
   const [pending, setPending] = useState(true);
@@ -10,7 +10,11 @@ export default function Session({ children }: { children: any }) {
       console.log("fetching profile")
       const currentUser = await client.profile();
       console.log(currentUser);
-      dispatch(setCurrentUser(currentUser));
+      if (isUser(currentUser) || currentUser === null) {
+        dispatch(setCurrentUser(currentUser));
+      } else {
+        throw new Error("Did not get user");
+      }
     } catch (err: any) {
       console.error(err);
     }
