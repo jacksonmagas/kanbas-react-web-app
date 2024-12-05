@@ -4,9 +4,15 @@ import Dashboard from "./Dashboard";
 import KanbasNavigation from "./Navigation";
 import Courses from "./Courses";
 import "./styles.css";
+<<<<<<< HEAD
 import { useEffect, useState } from "react";
 import ProtectedRoute from "./Account/ProtectedRoute";
 import EnrollmentProtectedRoute from "./EnrollmentProtectedRoute";
+=======
+import {useEffect, useState} from "react";
+import { ProtectedRoute } from "./Account/ProtectedRoute";
+import EnrollmentProtectedRoute from "./Account/EnrollmentProtectedRoute";
+>>>>>>> ea20316255aab665148a732361afb35b0c864bd7
 import Session from "./Account/Session";
 import * as userClient from "./Account/client";
 import * as courseClient from "./Courses/client";
@@ -25,13 +31,32 @@ export interface Course {
   author?: string
 }
 
+export function isCourse(obj: any): obj is Course {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    typeof obj._id === "string" &&
+    typeof obj.name === "string" &&
+    typeof obj.number === "string" &&
+    typeof obj.startDate === "string" &&
+    typeof obj.endDate === "string" &&
+    typeof obj.department === "string" &&
+    typeof obj.credits === "number" &&
+    typeof obj.image === "string" &&
+    typeof obj.description === "string" &&
+    (typeof obj.author === "string" || obj.author === undefined)
+  );
+}
+
 export default function Kanbas() {
   const [courses, setCourses] = useState<Course[]>([]);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const fetchCourses = async () => {
     try {
       const courses = await courseClient.fetchAllCourses();
-      setCourses(courses);
+      if (Array.isArray(courses) && courses.every(isCourse)) {
+        setCourses(courses);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -48,7 +73,9 @@ export default function Kanbas() {
   });
   const addNewCourse = async () => {
     const newCourse = await userClient.createCourse(course);
-    setCourses([...courses, newCourse]);
+    if (isCourse(newCourse)) {
+      setCourses([...courses, newCourse]);
+    }
   }
   const deleteCourse = async (courseId: string) => {
     const status = await courseClient.deleteCourse(courseId);

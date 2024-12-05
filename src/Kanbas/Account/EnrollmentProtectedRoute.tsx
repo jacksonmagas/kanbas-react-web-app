@@ -1,9 +1,9 @@
 import { Navigate, useParams } from "react-router";
-import { useKanbasSelector } from "../hooks";
+import { useKanbasSelector } from "../../hooks";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { setEnrollments } from "./reducer";
-import * as client from "./client";
+import { setEnrollments } from "../enrollmentsReducer";
+import * as client from "../client";
 
 export default function EnrollmentProtectedRoute({ children }: { children: React.ReactNode }) {
     const { cid } = useParams();

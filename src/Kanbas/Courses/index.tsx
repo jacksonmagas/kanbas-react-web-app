@@ -11,6 +11,8 @@ import DetailsEditor from "./Quizzes/DetailsEditor";
 import Details from "./Quizzes/Details";
 import QuizPreview from "./Quizzes/QuizPreview";
 import { useKanbasSelector } from "../../hooks";
+import { FacultyView } from "../Account/RoleShownContent";
+import { BiGlasses } from "react-icons/bi";
 
 export default function Courses({ courses }: { courses: any[]; }) {
   const { cid } = useParams();
@@ -19,7 +21,14 @@ export default function Courses({ courses }: { courses: any[]; }) {
     <div id="wd-courses">
       <h2 className="text-danger">
         <FaAlignJustify className="me-4 fs-4 mb-1" />
-        {course && course.name}</h2>
+        {course && course.name}
+        <FacultyView>
+          <button className="btn btn-secondary float-end">
+            <BiGlasses className="fs-4 me-1"/>
+            Student View
+          </button>
+        </FacultyView>
+      </h2>
       <hr />
       <div className="d-flex">
         <div className="d-none d-md-block">

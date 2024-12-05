@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useKanbasDispatch, useKanbasSelector } from "../hooks";
 import { Course } from ".";
 import { User } from "./Account/reducer";
-import { addEnrollment, deleteEnrollment, setEnrollments } from "./reducer";
+import { addEnrollment, deleteEnrollment, setEnrollments } from "./enrollmentsReducer";
 import * as client from "./client";
 
 function NewCourse({ addNewCourse,
