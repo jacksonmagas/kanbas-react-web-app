@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { setEnrollments } from "./reducer";
 import * as client from "./client";
 
-export default function EnrollmentProtectedRoute({children} : {children: React.ReactNode}) {
+export default function EnrollmentProtectedRoute({ children }: { children: React.ReactNode }) {
     const { cid } = useParams();
     const { currentUser } = useKanbasSelector(state => state.accountReducer);
     const { enrollments } = useKanbasSelector(state => state.enrollmentsReducer);
@@ -13,19 +13,19 @@ export default function EnrollmentProtectedRoute({children} : {children: React.R
 
     const fetchEnrollments = async () => {
         try {
-        const enrollments = await client.getEnrollments(currentUser?._id ?? "");
-        dispatch(setEnrollments(enrollments));
+            const enrollments = await client.getEnrollments(currentUser?._id ?? "");
+            dispatch(setEnrollments(enrollments));
         } catch (error) {
-        console.error(error);
+            console.error(error);
         }
     }
     useEffect(() => {
         fetchEnrollments();
     }, [enrollments]);
 
-    if (!enrollments.some((e) => {console.log(e); return e.user === currentUser?._id && e.course === cid})) {
+    if (!enrollments.some((e) => { console.log(e); return e.user === currentUser?._id && e.course === cid })) {
         return <Navigate to="/Kanbas/Dashboard" />;
     } else {
-        return children;
+        return <>{children}</>;
     }
 }

@@ -4,7 +4,7 @@ import Dashboard from "./Dashboard";
 import KanbasNavigation from "./Navigation";
 import Courses from "./Courses";
 import "./styles.css";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import ProtectedRoute from "./Account/ProtectedRoute";
 import EnrollmentProtectedRoute from "./EnrollmentProtectedRoute";
 import Session from "./Account/Session";
@@ -57,42 +57,43 @@ export default function Kanbas() {
   const updateCourse = async () => {
     await courseClient.updateCourse(course);
     setCourses(courses.map((c) => {
-        if (c._id === course._id) { return course; }
-        else { return c; }
+      if (c._id === course._id) { return course; }
+      else { return c; }
     })
-  );};
+    );
+  };
 
   return (
     <Session>
       <div id="wd-kanbas">
         <KanbasNavigation />
         <div className="wd-main-content-offset p-3">
-        <h1>Kanbas</h1>
+          <h1>Kanbas</h1>
           <Routes>
             <Route path="/" element={<Navigate to="Account" />} />
             <Route path="/Account/*" element={<Account />} />
             <Route path="/Dashboard/*" element={
               <ProtectedRoute>
-                <Dashboard  courses={courses}
-                            course={course}
-                            setCourse={setCourse}
-                            addNewCourse={addNewCourse}
-                            deleteCourse={deleteCourse}
-                            updateCourse={updateCourse}/>
+                <Dashboard courses={courses}
+                  course={course}
+                  setCourse={setCourse}
+                  addNewCourse={addNewCourse}
+                  deleteCourse={deleteCourse}
+                  updateCourse={updateCourse} />
               </ProtectedRoute>
             } />
             <Route path="/Courses" element={
               <ProtectedRoute>
-                <Dashboard  courses={courses}
-                          course={course}
-                          setCourse={setCourse}
-                          addNewCourse={addNewCourse}
-                          deleteCourse={deleteCourse}
-                          updateCourse={updateCourse}/>
+                <Dashboard courses={courses}
+                  course={course}
+                  setCourse={setCourse}
+                  addNewCourse={addNewCourse}
+                  deleteCourse={deleteCourse}
+                  updateCourse={updateCourse} />
               </ProtectedRoute>
             } />
             <Route path="/Courses/:cid/*" element={<EnrollmentProtectedRoute>
-              <Courses courses={courses}/>
+              <Courses courses={courses} />
             </EnrollmentProtectedRoute>} />
             <Route path="/Calendar" element={<h1>Calendar</h1>} />
             <Route path="/Inbox" element={<h1>Inbox</h1>} />
