@@ -4,15 +4,9 @@ import Dashboard from "./Dashboard";
 import KanbasNavigation from "./Navigation";
 import Courses from "./Courses";
 import "./styles.css";
-<<<<<<< HEAD
-import { useEffect, useState } from "react";
-import ProtectedRoute from "./Account/ProtectedRoute";
-import EnrollmentProtectedRoute from "./EnrollmentProtectedRoute";
-=======
 import {useEffect, useState} from "react";
 import { ProtectedRoute } from "./Account/ProtectedRoute";
 import EnrollmentProtectedRoute from "./Account/EnrollmentProtectedRoute";
->>>>>>> ea20316255aab665148a732361afb35b0c864bd7
 import Session from "./Account/Session";
 import * as userClient from "./Account/client";
 import * as courseClient from "./Courses/client";

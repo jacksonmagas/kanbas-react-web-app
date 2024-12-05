@@ -5,13 +5,10 @@ import { Link, useParams } from "react-router-dom";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { IoEllipsisVertical } from "react-icons/io5";
 import QuizIcon from "./QuizIcon";
-<<<<<<< HEAD
-=======
 import QuestionsEditor from "./QuestionsEditor";
 import { FacultyView } from "../../Account/RoleShownContent";
 import QuestionEditor from "./QuestionEditors";
 // import AssignmentControlButtons from "./AssignmentControlButtons";
->>>>>>> ea20316255aab665148a732361afb35b0c864bd7
 
 export default function Quizzes() {
   const { cid } = useParams();
