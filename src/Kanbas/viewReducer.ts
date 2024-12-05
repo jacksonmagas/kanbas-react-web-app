@@ -1,16 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState : {currentUser: string | null} = {
-  currentUser: null,
+const initialState : {currentView: string | null} = {
+  currentView: null,
 };
-const accountSlice = createSlice({
-  name: "account",
+const viewSlice = createSlice({
+  name: "view",
   initialState,
   reducers: {
-    setCurrentUser: (state, action: PayloadAction<string>) => {
-      state.currentUser = action.payload;
+    setCurrentView: (state, action: PayloadAction<string | null>) => {
+      state.currentView = action.payload;
     },
   },
 });
-export const { setCurrentUser } = accountSlice.actions;
-export default accountSlice.reducer;
+export const { setCurrentView } = viewSlice.actions;
+export default viewSlice.reducer;

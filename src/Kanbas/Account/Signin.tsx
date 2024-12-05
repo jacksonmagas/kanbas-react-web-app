@@ -1,18 +1,24 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { setCurrentUser } from "./reducer";
+import { isUser, setCurrentUser } from "./reducer";
 import { useDispatch } from "react-redux";
 import * as client from "./client"
 
+export interface Credential {
+  username: string,
+  password: string
+}
+
 export default function Signin() {
-  const [credentials, setCredentials] = useState<any>({});
+  const [credentials, setCredentials] = useState<Credential>({username: "", password: ""});
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const signin = async () => {
     const user = await client.signin(credentials);
-    if (!user) return;
-    dispatch(setCurrentUser(user));
-    navigate("/Kanbas/Dashboard");
+    if (isUser(user)) {
+      dispatch(setCurrentUser(user));
+      navigate("/Kanbas/Dashboard");
+    }
   };
 
   return (

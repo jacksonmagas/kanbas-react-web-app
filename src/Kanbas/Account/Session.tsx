@@ -1,8 +1,9 @@
 import * as client from "./client";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { isUser, setCurrentUser } from "./reducer";
 import { useDispatch } from "react-redux";
-export default function Session({ children }: { children: any }) {
+import { setCurrentView } from "../viewReducer";
+export default function Session({ children }: { children: ReactNode }) {
   const [pending, setPending] = useState(true);
   const dispatch = useDispatch();
   const fetchProfile = async () => {
@@ -12,8 +13,9 @@ export default function Session({ children }: { children: any }) {
       console.log(currentUser);
       if (isUser(currentUser) || currentUser === null) {
         dispatch(setCurrentUser(currentUser));
+        dispatch(setCurrentView(currentUser ? currentUser.role : currentUser))
       } else {
-        throw new Error("Did not get user");
+        throw new Error("Did not get user or null from server");
       }
     } catch (err: any) {
       console.error(err);

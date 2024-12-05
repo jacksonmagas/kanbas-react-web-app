@@ -1,19 +1,20 @@
 import { useSelector } from "react-redux";
-import { User } from "./reducer";
+import { RootState } from "../store";
+import { ReactNode } from "react";
 
-export function StudentView({ children }: { children: any }) {
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
-  //const { view } = useSelector((state: any) => state.viewReducer);
-  if (currentUser?.role === "STUDENT"/* || view === "STUDENT"*/) {
+export function StudentView({ children }: { children: ReactNode }) {
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  const { currentView } = useSelector((state: RootState) => state.viewReducer);
+  if (currentUser?.role === "STUDENT" || currentView === "STUDENT") {
     return children;
   } else {
     return <div/>;
 }}
 
-export function FacultyView({ children }: { children: any }) {
-  const { currentUser } : { currentUser : User | undefined} = useSelector((state: any) => state.accountReducer);
-  //const { view } : { view : string | undefined} = useSelector((state: any) => state.viewReducer);
-  if (currentUser?.role === "FACULTY"/* && view === "FACULTY"*/) {
+export function FacultyView({ children }: { children: ReactNode }) {
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  const { currentView } = useSelector((state: RootState) => state.viewReducer);
+  if (currentUser?.role === "FACULTY" && currentView === "FACULTY") {
     return children;
   } else {
     return <div/>;
