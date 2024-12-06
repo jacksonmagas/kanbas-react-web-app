@@ -27,7 +27,7 @@ export default function KanbasNavigation() {
         className="list-group-item text-center border-0 bg-black">
         <img src="/images/NEU.png" width="75px" /></a>
       {links.map((link) => (
-        <NavLink key={link.path} to={link.path} className={linkStyle}>
+        <NavLink key={link.label} to={link.path} className={linkStyle}>
           {link.icon({className: `fs-1 ${pathname.includes("Account") ? "text-danger" : link.iconColor}`})}
           <br/>
           {link.label}

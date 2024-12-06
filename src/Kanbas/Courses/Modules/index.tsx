@@ -7,13 +7,13 @@ import LessonControlButtons from "./LessonControlButtons";
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
 import { setModules, addModule, editModule, updateModule, deleteModule } from "./reducer";
-import { useSelector, useDispatch } from "react-redux";
 import * as coursesClient from "../client";
 import * as modulesClient from "./client";
+import { useKanbasDispatch, useKanbasSelector } from "../../../hooks";
 
 function ModuleHeader({ module, isFaculty } :
   {module: any, isFaculty: boolean}) {
-  const dispatch = useDispatch();
+  const dispatch = useKanbasDispatch();
   const saveModule = async (module: any) => {
     await modulesClient.updateModule(module);
     dispatch(updateModule(module));
@@ -41,9 +41,9 @@ function ModuleHeader({ module, isFaculty } :
 
 export default function Modules() {
   const { cid } = useParams();
-  const { modules } = useSelector((state: any) => state.modulesReducer);
+  const { modules } = useKanbasSelector(state => state.modulesReducer);
   const [moduleName, setModuleName] = useState("");
-  const dispatch = useDispatch();
+  const dispatch = useKanbasDispatch();
 
   const fetchModules = async () => {
     const modules = await coursesClient.findModulesForCourse(cid as string);
@@ -59,8 +59,8 @@ export default function Modules() {
     dispatch(addModule(module));
   };
 
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const isFaculty = currentUser.role === "FACULTY";
+  const { currentUser } = useKanbasSelector(state => state.accountReducer);
+  const isFaculty = currentUser?.role === "FACULTY";
   return (
   <div>
     <ModulesControls setModuleName={setModuleName} moduleName={moduleName} addModule={createModuleForCourse} /><br /><br /><br /><br />

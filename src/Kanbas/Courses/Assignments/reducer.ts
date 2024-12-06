@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type Assignment = {
   _id : string,
@@ -14,8 +14,12 @@ export type Assignment = {
   pts : number,
 }
 
-const initialState = {
-  assignments: [],
+interface AssignmentState {
+  assignments: Assignment[];
+}
+
+const initialState: AssignmentState = {
+  assignments: []
 };
 
 const assignmentsSlice = createSlice({
@@ -25,32 +29,23 @@ const assignmentsSlice = createSlice({
     setAssignments: (state, action) => {
       state.assignments = action.payload;
     },
-    addAssignment: (state, { payload: assignment } : { payload: Assignment }) => {
-      const newAssignment: any = {
-        _id: new Date().getTime().toString(),
-        course: assignment.course,
-        name: assignment.name,
-        stday: assignment.stday,
-        sttime: assignment.sttime,
-        dueday: assignment.dueday,
-        duetime: assignment.duetime,
-        pts: assignment.pts
+    addAssignment: (state, action: PayloadAction<Assignment>) => {
+      const newAssignment = {
+        ...action.payload,
+        _id: new Date().getTime().toString()
       };
-      state.assignments = [...state.assignments, newAssignment] as any;
+      state.assignments = [...state.assignments, newAssignment];
     },
-    deleteAssignment: (state, { payload: assignmentId } : { payload: string }) => {
-      state.assignments = state.assignments.filter(
-        (a: any) => a._id !== assignmentId);
+    deleteAssignment: (state, action: PayloadAction<string>) => {
+      state.assignments = state.assignments.filter(a => a._id !== action.payload);
     },
-    updateAssignment: (state, { payload: assignment } : { payload: Assignment }) => {
-      state.assignments = state.assignments.map((a: any) =>
-        a._id === assignment._id ? assignment : a
-      ) as any;
+    updateAssignment: (state, action: PayloadAction<Assignment>) => {
+      const assignment = action.payload;
+      state.assignments = state.assignments.map(a => a._id === assignment._id ? assignment : a);
     },
-    editAssignment: (state, { payload: assignmentId } : { payload: string }) => {
-      state.assignments = state.assignments.map((a: any) =>
-        a._id === assignmentId ? { ...a, editing: true } : a
-      ) as any;
+    editAssignment: (state, action: PayloadAction<string>) => {
+      state.assignments = state.assignments.map(a =>
+        a._id === action.payload ? { ...a, editing: true } : a);
     },
   },
 });

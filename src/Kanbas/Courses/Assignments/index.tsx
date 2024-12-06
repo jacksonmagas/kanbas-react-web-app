@@ -4,7 +4,6 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { MdArrowDropDown, MdEditDocument } from "react-icons/md";
 import { IoEllipsisVertical } from "react-icons/io5";
 import GreenCheckmark from "../Modules/GreenCheckmark";
-import { useSelector, useDispatch } from "react-redux";
 import type { Assignment } from "./reducer";
 import { useParams } from "react-router";
 import * as coursesClient from "../client";
@@ -12,13 +11,14 @@ import { useEffect } from "react";
 import { setAssignments, deleteAssignment } from "./reducer";
 import { BiTrash } from "react-icons/bi";
 import * as assignmentClient from "./client"
+import { useKanbasDispatch, useKanbasSelector } from "../../../hooks";
 
 
 export default function Assignments() {
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const isFaculty = currentUser.role === "FACULTY";
-  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-  const dispatch = useDispatch();
+  const { currentUser } = useKanbasSelector(state => state.accountReducer);
+  const isFaculty = currentUser?.role === "FACULTY";
+  const { assignments } = useKanbasSelector(state => state.assignmentsReducer);
+  const dispatch = useKanbasDispatch();
   const typedAssignments = assignments as Assignment[];
   const { cid } = useParams();
   const fetchAssignments = async () => {

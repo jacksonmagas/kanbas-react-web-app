@@ -1,6 +1,5 @@
 import { Navigate, useParams } from "react-router";
-import { useKanbasSelector } from "../../hooks";
-import { useDispatch } from "react-redux";
+import { useKanbasDispatch, useKanbasSelector } from "../../hooks";
 import { useEffect } from "react";
 import { setEnrollments } from "../enrollmentsReducer";
 import * as client from "../client";
@@ -9,7 +8,7 @@ export default function EnrollmentProtectedRoute({children} : {children: React.R
     const { cid } = useParams();
     const { currentUser } = useKanbasSelector(state => state.accountReducer);
     const { enrollments } = useKanbasSelector(state => state.enrollmentsReducer);
-    const dispatch = useDispatch();
+    const dispatch = useKanbasDispatch();
 
     const fetchEnrollments = async () => {
         try {

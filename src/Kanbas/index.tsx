@@ -10,8 +10,7 @@ import EnrollmentProtectedRoute from "./Account/EnrollmentProtectedRoute";
 import Session from "./Account/Session";
 import * as userClient from "./Account/client";
 import * as courseClient from "./Courses/client";
-import { useSelector } from "react-redux";
-import { RootState } from "./store";
+import { useKanbasSelector } from "../hooks";
 
 export interface Course {
   _id: string,
@@ -45,11 +44,11 @@ export function isCourse(obj: any): obj is Course {
 
 export default function Kanbas() {
   const [courses, setCourses] = useState<Course[]>([]);
-  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  const { currentUser } = useKanbasSelector(state => state.accountReducer);
   const fetchCourses = async () => {
     try {
       const courses = await courseClient.fetchAllCourses();
-      if (Array.isArray(courses) && courses.every(isCourse)) {
+      if (courses) {
         setCourses(courses);
       }
     } catch (error) {

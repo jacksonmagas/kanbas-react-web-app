@@ -92,9 +92,9 @@ export default function Dashboard(
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4">
           {courses
-            .filter((course) => !enrollmentSwitch || isEnrolled(course))
+            //.filter((course) => !enrollmentSwitch || isEnrolled(course))
             .map((course) => (
-              <div className="wd-dashboard-course col" style={{ width: "300px" }}>
+              <div key={course._id} className="wd-dashboard-course col" style={{ width: "300px" }}>
                 <div className="card rounded-3 overflow-hidden">
                   <Link to={`/Kanbas/Courses/${course._id}/Home`}
                         className="wd-dashboard-course-link text-decoration-none text-dark" >

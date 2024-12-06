@@ -1,8 +1,9 @@
 import { useLocation, useParams } from "react-router";
 import { addAssignment, editAssignment, updateAssignment, deleteAssignment, Assignment } from "./reducer";
-import { useDispatch, useSelector } from "react-redux";
 import * as assignmentClient from "./client"
 import * as coursesClient from "../client"
+import { useKanbasDispatch, useKanbasSelector } from "../../../hooks";
+import { useState } from "react";
 
 const dateObjectToHtmlDateString = (date: Date) => {
     return `${date.getFullYear()}-${date.getMonth() + 1 < 10 ? 0 : ""}${
@@ -23,9 +24,9 @@ async function saveAssignment(assignment: Assignment, cid: string, dispatch: any
 export default function AssignmentEditor() {
   const { pathname } = useLocation();
   const { cid, aid } = useParams();
-  const dispatch = useDispatch();
-  let assignment : Assignment = useSelector((state: any) => state.assignmentsReducer)
-    .assignments.find((a :Assignment) => a._id === aid);
+  const dispatch = useKanbasDispatch();
+  const [assignment, setAssignment] = useState(useKanbasSelector(state => state.assignmentsReducer)
+    .assignments.find(a => a._id === aid));
   if (!cid) {
     return (
       <div>
@@ -33,7 +34,7 @@ export default function AssignmentEditor() {
       </div>)
   }
   if (pathname.includes("new-assignment")) {
-    assignment = {
+    setAssignment({
       _id: "",
       course: cid,
       name: "assignment name here",
@@ -45,23 +46,23 @@ export default function AssignmentEditor() {
       endday: dateObjectToHtmlDateString(new Date()),
       endtime: "11:59pm",
       pts: 100
-    };
+    });
   } else {
   }
-  return (
+  return assignment && (
     <div id="wd-assignments-editor"> 
       <div className="ms-1 row form-group g-4">
         <label htmlFor="wd-name">Assignment Name</label>
         <input id="wd-name" className="form-control border-secondary g-2" defaultValue={assignment.name}
-          onChange={(e) => {assignment = { ...assignment, name:  e.target.value }}}/>
+          onChange={(e) => {setAssignment({ ...assignment, name:  e.target.value })}}/>
         <textarea id="wd-description" className="form-control border-secondary"
-          onChange={(e) => {assignment = { ...assignment, description:  e.target.value }}}>
+          onChange={(e) => {setAssignment({ ...assignment, description:  e.target.value })}}>
           {assignment.description}
         </textarea>
         <label htmlFor="wd-points " className="col-4 col-form-label text-end">Points</label>
         <div className="col-8">
           <input id="wd-points" type="number" className="form-control border-secondary" defaultValue={assignment.pts} 
-            onChange={(e) => {assignment = { ...assignment, pts: parseInt(e.target.value)}}}/>
+            onChange={(e) => {setAssignment({ ...assignment, pts: parseInt(e.target.value)})}}/>
         </div>
         <label htmlFor="wd-group" className="col-4 col-form-label text-end">Assignment Group </label>
         <div className="col-8">
@@ -123,17 +124,17 @@ export default function AssignmentEditor() {
           <input type="text" id="wd-assign-to" value="Everyone" className="form-control border-secondary mb-4"/>
           <label htmlFor="wd-due-date" className="fw-bold mb-2" defaultValue={assignment.dueday}> Due </label>
           <input type="date" id="wd-due-date" className="form-control border-secondary mb-4" defaultValue={assignment.dueday}
-            onChange={(e) => {assignment = {...assignment, dueday: e.target.value}}}/>
+            onChange={(e) => {setAssignment({...assignment, dueday: e.target.value})}}/>
           <div className="d-flex">
             <div className="flex-fill me-2">
               <label htmlFor="wd-available-from" className="fw-bold mb-2"> Available from </label>
               <input type="date" id="wd-available-from" className="form-control border-secondary" defaultValue={assignment.stday}
-                onChange={(e) => {assignment = {...assignment, stday: e.target.value}}}/>
+                onChange={(e) => {setAssignment({...assignment, stday: e.target.value})}}/>
             </div>
             <div className="flex-fill">
               <label htmlFor="wd-available-until" className="fw-bold mb-2"> Until </label>
               <input type="date" id="wd-available-until" className="form-control border-secondary" defaultValue={assignment.endday}
-                onChange={(e) => {assignment = {...assignment, endday: e.target.value}}}/>
+                onChange={(e) => {setAssignment({...assignment, endday: e.target.value})}}/>
             </div>
           </div>
         </div>

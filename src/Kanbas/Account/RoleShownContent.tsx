@@ -1,5 +1,4 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { useKanbasSelector } from "../../hooks";
 import { ReactNode } from "react";
 
 /**
@@ -24,8 +23,8 @@ import { ReactNode } from "react";
  * </RoleView>
  */
 export function RoleView({ children, role, loose = false }: { children: ReactNode, role: string, loose?: boolean }) {
-  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
-  const { currentView } = useSelector((state: RootState) => state.viewReducer);
+  const { currentUser } = useKanbasSelector(state => state.accountReducer);
+  const { currentView } = useKanbasSelector(state => state.viewReducer);
   const compare = (l: boolean, r: boolean) => loose ? l || r : l && r;
   if (compare(currentUser?.role === role, currentView === role)) {
     return children;

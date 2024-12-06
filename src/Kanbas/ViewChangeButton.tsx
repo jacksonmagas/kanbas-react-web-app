@@ -1,13 +1,12 @@
 import { BiGlasses } from "react-icons/bi";
 import { RoleView } from "./Account/RoleShownContent";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "./store";
 import { setCurrentView } from "./viewReducer";
+import { useKanbasSelector, useKanbasDispatch } from "../hooks";
 
 export default function ViewButton({ className } : { className?: string }) {
-    const { currentUser } = useSelector((state: RootState) => state.accountReducer);
-    const { currentView } = useSelector((state: RootState) => state.viewReducer);
-    const dispatch = useDispatch();
+    const { currentUser } = useKanbasSelector(state => state.accountReducer);
+    const { currentView } = useKanbasSelector(state => state.viewReducer);
+    const dispatch = useKanbasDispatch();
 
     const nextView = () => currentUser?.role === currentView ? "STUDENT" : currentUser?.role;
 
