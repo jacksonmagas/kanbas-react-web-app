@@ -4,6 +4,8 @@ import Signin from "./Signin";
 import Profile from "./Profile";
 import Signup from "./Signup";
 import { useSelector } from "react-redux";
+import Users from "./Users";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 export default function Account() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
@@ -19,8 +21,10 @@ export default function Account() {
             <Routes>
               <Route path="/" element={<Navigate to={currentUser ? "Profile" : "Signin"} />} />
               <Route path="/Signin" element={<Signin />} />
-              <Route path="/Profile" element={<Profile />} />
+              <Route path="/Profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/Signup" element={<Signup />} />
+              <Route path="/Users" element={<ProtectedRoute role="ADMIN"><Users /></ProtectedRoute>} />
+              <Route path="/Users/:uid" element={<ProtectedRoute role="ADMIN"><Users /></ProtectedRoute>} />
             </Routes>
 	  </td>
 	</tr>

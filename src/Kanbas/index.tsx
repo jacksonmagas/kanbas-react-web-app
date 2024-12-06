@@ -11,6 +11,7 @@ import Session from "./Account/Session";
 import * as userClient from "./Account/client";
 import * as courseClient from "./Courses/client";
 import { useSelector } from "react-redux";
+import { RootState } from "./store";
 
 export interface Course {
   _id: string,
@@ -44,7 +45,7 @@ export function isCourse(obj: any): obj is Course {
 
 export default function Kanbas() {
   const [courses, setCourses] = useState<Course[]>([]);
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const fetchCourses = async () => {
     try {
       const courses = await courseClient.fetchAllCourses();
@@ -88,7 +89,8 @@ export default function Kanbas() {
       <div id="wd-kanbas">
         <KanbasNavigation />
         <div className="wd-main-content-offset p-3">
-        <h1>Kanbas</h1>
+        <h1>Kanbas
+        </h1>
           <Routes>
             <Route path="/" element={<Navigate to="Account" />} />
             <Route path="/Account/*" element={<Account />} />

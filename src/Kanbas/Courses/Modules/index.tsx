@@ -67,7 +67,7 @@ export default function Modules() {
     <ul id="wd-modules" className="list-group rounded-0">
       {modules
         .map((module: any) => (
-        <li className="wd-module list-group-item p-0 mb-5 fs-5 border-gray">
+        <li className="wd-module list-group-item p-0 mb-5 fs-5">
           <ModuleHeader module={module} isFaculty={isFaculty}/>
           {module.lessons && (
             <ul className="wd-lessons list-group rounded-0">
