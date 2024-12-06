@@ -1,31 +1,14 @@
 import { Navigate, useParams } from "react-router";
+import { Course } from ".";
 import { useKanbasSelector } from "../hooks";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { setEnrollments } from "./reducer";
-import * as client from "./client";
 
-export default function EnrollmentProtectedRoute({children} : {children: React.ReactNode}) {
+export default function EnrollmentProtectedRoute({children, courses} : {children: React.ReactNode, courses: Course[]}) {
     const { cid } = useParams();
     const { currentUser } = useKanbasSelector(state => state.accountReducer);
-    const { enrollments } = useKanbasSelector(state => state.enrollmentsReducer);
-    const dispatch = useDispatch();
 
-    const fetchEnrollments = async () => {
-        try {
-        const enrollments = await client.getEnrollments(currentUser?._id ?? "");
-        dispatch(setEnrollments(enrollments));
-        } catch (error) {
-        console.error(error);
-        }
-    }
-    useEffect(() => {
-        fetchEnrollments();
-    }, [enrollments]);
-
-    if (!enrollments.some((e) => {console.log(e); return e.user === currentUser?._id && e.course === cid})) {
-        return <Navigate to="/Kanbas/Dashboard" />;
-    } else {
+    if (currentUser && (["FACULTY", "ADMIN"].includes(currentUser.role) || courses.some((c) => c._id === cid && c.enrolled))) {
         return children;
+    } else {
+        return <Navigate to="/Kanbas/Dashboard" />;
     }
 }

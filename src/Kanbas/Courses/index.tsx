@@ -10,16 +10,37 @@ import PeopleTable from "./People/Table";
 import DetailsEditor from "./Quizzes/DetailsEditor";
 import Details from "./Quizzes/Details";
 import QuizPreview from "./Quizzes/QuizPreview";
-import { useKanbasSelector } from "../../hooks";
+import ViewButton from "../ViewChangeButton";
+import { Course } from "..";
+import { useEffect, useState } from "react";
+import { User } from "../Account/reducer";
+import { findUsersForCourse } from "./client";
 
-export default function Courses({ courses }: { courses: any[]; }) {
+export default function Courses({ courses }: { courses: Course[]; }) {
   const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
+  const [users, setUsers] = useState<User[]>([]);
+
+  const fetchUsers = async () => {
+    const users = cid ? await findUsersForCourse(cid) : null;
+    if (users) {
+      setUsers(users);
+    }
+  }
+
+  useEffect(() => {
+    fetchUsers()
+  }, []);
+  
   return (
     <div id="wd-courses">
+      <div className="d-flex justify-content-between align-items-center" >
       <h2 className="text-danger">
         <FaAlignJustify className="me-4 fs-4 mb-1" />
-        {course && course.name}</h2>
+        {course && course.name}
+      </h2>
+        <ViewButton className="flex-end"/>
+      </div>
       <hr />
       <div className="d-flex">
         <div className="d-none d-md-block">
@@ -36,7 +57,7 @@ export default function Courses({ courses }: { courses: any[]; }) {
             <Route path="Quizzes/:aid" element={<Details />} />
             <Route path="Quizzes/:aid/edit" element={<DetailsEditor />} />
             <Route path="Quizzes/:aid/preview" element={<QuizPreview />} />
-            <Route path="People" element={<PeopleTable />} />
+            <Route path="People" element={<PeopleTable users={users}/>} />
           </Routes>
         </div>
       </div>

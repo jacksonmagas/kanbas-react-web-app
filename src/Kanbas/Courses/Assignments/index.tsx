@@ -4,7 +4,6 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { MdArrowDropDown, MdEditDocument } from "react-icons/md";
 import { IoEllipsisVertical } from "react-icons/io5";
 import GreenCheckmark from "../Modules/GreenCheckmark";
-import { useSelector, useDispatch } from "react-redux";
 import type { Assignment } from "./reducer";
 import { useParams } from "react-router";
 import * as coursesClient from "../client";
@@ -12,18 +11,24 @@ import { useEffect } from "react";
 import { setAssignments, deleteAssignment } from "./reducer";
 import { BiTrash } from "react-icons/bi";
 import * as assignmentClient from "./client"
+import { useKanbasDispatch, useKanbasSelector } from "../../../hooks";
 
+function renderDate(date :Date) {
+  return `${date.toLocaleDateString("en-US", { month: "long", day: "numeric" })} 
+            at ${date.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', hour12: true})}`
+}
 
 export default function Assignments() {
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const isFaculty = currentUser.role === "FACULTY";
-  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-  const dispatch = useDispatch();
-  const typedAssignments = assignments as Assignment[];
+  const { currentUser } = useKanbasSelector(state => state.accountReducer);
+  const isFaculty = currentUser?.role === "FACULTY";
+  const { assignments } = useKanbasSelector(state => state.assignmentsReducer);
+  const dispatch = useKanbasDispatch();
   const { cid } = useParams();
   const fetchAssignments = async () => {
     const assignments = await coursesClient.findAssignmentsForCourse(cid ?? "");
-    dispatch(setAssignments(assignments));
+    if (assignments) {
+      dispatch(setAssignments(assignments));
+    }
   }
 
   const removeAssignment = async (assignment: Assignment) => {
@@ -36,7 +41,7 @@ export default function Assignments() {
   }, []);
 
   function AssignmentPanel(assignment :Assignment) {
-    const {_id, course, name, stday, sttime, dueday, duetime, pts} = assignment;
+    const {_id, course, name, sttime, duetime, pts} = assignment;
     return (
       <div className="d-flex align-items-center">
         <BsGripVertical className="fs-4 me-2"/>
@@ -48,10 +53,10 @@ export default function Assignments() {
           </a>
           <br />
           <span className="text-danger"> Multiple Modules </span> | <strong> Not available until </strong>
-          {new Date(stday + "T00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) + " at " + sttime} |
+          {renderDate(new Date(sttime))} |
           <br/>
           <strong> Due </strong>
-          {new Date(dueday + "T00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) + " at " + duetime} | {pts}pts
+          {renderDate(new Date(duetime))} | {pts}pts
         </div>
         <div className="flex-end">
           <BiTrash className="fs-4 me-2" onClick={() => removeAssignment(assignment)}/>
@@ -96,9 +101,9 @@ export default function Assignments() {
         </div>
       </div>
       <ul id="wd-assignment-list" className="list-group rounded-0">
-        {typedAssignments
-          .filter((a) => a.course === cid)
-          .map((a) => (<li className="wd-assignment-list-item list-group-item p-3 ps-1">
+        {assignments
+          .filter(a => a.course === cid)
+          .map(a => (<li key={a._id} className="wd-assignment-list-item list-group-item p-3 ps-1">
             <AssignmentPanel {...a}/>
           </li>))}
       </ul>

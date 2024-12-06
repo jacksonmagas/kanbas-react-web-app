@@ -1,9 +1,11 @@
-import { useSelector } from "react-redux";
+import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
-export default function ProtectedRoute({ children }: { children: any }) {
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
-  if (currentUser) {
+import { useKanbasSelector } from "../../hooks";
+
+export function ProtectedRoute({ children, role }: { children: ReactNode, role?: string }) {
+  const { currentUser } = useKanbasSelector(state => state.accountReducer);
+  if (currentUser && (!role || currentUser.role === role)) {
     return children;
   } else {
-    return <Navigate to="/Kanbas/Account/Signin" />;
+    return <Navigate to="/Kanbas/Account" />;
 }}

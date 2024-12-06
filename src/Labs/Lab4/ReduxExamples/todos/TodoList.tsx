@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import TodoItem from "./TodoItem";
 import TodoForm from "./TodoForm";
 import { useSelector } from "react-redux";

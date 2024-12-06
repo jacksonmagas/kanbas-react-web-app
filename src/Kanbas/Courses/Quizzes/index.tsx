@@ -1,179 +1,115 @@
-
-
 import { BsGripVertical, BsPlus } from "react-icons/bs";
 import LessonControlButtons from "../Modules/LessonControlButtons";
-// import ModulesControlButtons from "../Modules/ModulesControlButtons";
-// import AssignmentContorls from "./AssignmentControls";
-// import AssignmentIcon from "./AssignmentIcon";
 import { TiArrowSortedDown } from "react-icons/ti";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { IoEllipsisVertical } from "react-icons/io5";
 import QuizIcon from "./QuizIcon";
+import { MdUnpublished } from "react-icons/md";
+import { IoCheckmarkCircle } from "react-icons/io5";
 import QuestionsEditor from "./QuestionsEditor";
+import { RoleView } from "../../Account/RoleShownContent";
+import QuestionEditor from "./QuestionEditors";
+import { useState } from "react";
+import GreenCheckmark from "../Modules/GreenCheckmark";
 // import AssignmentControlButtons from "./AssignmentControlButtons";
 
-
-
 export default function Quizzes() {
+  const { cid } = useParams();
+
+
+
+
+  const [quizzes, setQuizzes] = useState([
+    { id: "123", title: "Q1 - HTML", status: "Closed", due: "Sep 21 at 1pm", points: 29, questions: 11, publish: false },
+    { id: "124", title: "Q2 - CSS", status: "Closed", due: "Oct 5 at 1pm", points: 32, questions: 7, publish: false },
+  ]);
+
+  const togglePublish = (id: string) => {
+    setQuizzes(prevQuizzes =>
+      prevQuizzes.map(quiz =>
+        quiz.id === id ? { ...quiz, publish: !quiz.publish } : quiz
+      )
+    );
+  };
+
+
+
   return (
     <div>
       <div>
         <div className="d-flex mb-1 align-items-center">
           <input id="wd-search-assignment"
-            className="form-control me-5  border-secondary"
+            className="form-control me-5 border-secondary"
             placeholder="Search for Quiz" />
-          <button id="wd-add-quizzes" className="btn btn-danger d-flex flex-end me-2">
-            <BsPlus className="fs-4" />
-            Quiz
-          </button>
-          <button id="wd-add-quizzes-group" className="btn btn-secondary d-flex me-1">
-            <IoEllipsisVertical className="fs-4" />
-          </button>
+            <Link className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
+              to={`/Kanbas/Courses/${cid}/Quizzes/new-quiz/edit`}>
+              <button id="wd-add-quizzes" className="btn btn-danger d-flex flex-end me-2">
+                <BsPlus className="fs-4" />
+                Quiz
+              </button>
+            </Link>
+          <div className="dropdown d-flex me-1">
+            <button id="wd-add-quizzes-group" className="btn btn-secondary" type="button" data-bs-toggle="dropdown">
+              <IoEllipsisVertical className="fs-4" />
+            </button>
+            <ul className="dropdown-menu">
+              <li className="dropdown-item"> Options </li>
+              <li className="dropdown-item"> More Options </li>
+            </ul>
+          </div>
         </div>
-        < hr />
+        <hr />
 
         <ul id="wd-quizzes-list" className="list-group rounded-0">
           <li className="wd-quizzes-list list-group-item p-0 mb-5 fs-5 border-gray">
             <div className="wd-quizzess-title p-3 ps-2 bg-secondary ">
-
               <TiArrowSortedDown className="me-2" /><b> Assignment Quizzes</b>
-
             </div>
-
             <ul className="wd-quizzes-list-item list-group rounded-0">
-              <li className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center">
-                  <BsGripVertical className="me-2 fs-3" />
-                  <QuizIcon />
-                  <div>
-                    <a className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
-                      href="#/Kanbas/Courses/1234/Quizzes/123">
-                      <h4><b>Q1 - HTML</b></h4>
-                    </a>
-                    <p className="mb-0">
-                      <b>Closed</b> | <b>Due</b> Sep 21 at 1pm | 29 pts | 11 Questions
-                    </p>
+              {quizzes.map(quiz => (
+                <li key={quiz.id} className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <BsGripVertical className="me-2 fs-3" />
+                    <QuizIcon />
+                    <div>
+                      <Link className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
+                        to={`/Kanbas/Courses/${cid}/Quizzes/${quiz.id}`}>
+                        <h4><b>{quiz.title}</b></h4>
+                      </Link>
+                      <p className="mb-0">
+                        <b>{quiz.status}</b> | <b>Due</b> {quiz.due} | {quiz.points} pts | {quiz.questions} Questions
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <LessonControlButtons />
-              </li>
-              <li className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center">
-                  <BsGripVertical className="me-2 fs-3" />
-                  <QuizIcon />
-                  <div>
-                    <a className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0"
-                      href="#/Kanbas/Courses/1234/Quizzes/123">
-                      <h4><b>Q2 - CSS</b></h4>
-                    </a>
-                    <p className="mb-0">
-                      <b>Closed</b> | <b>Due</b> Oct 5 at 1pm | 32 pts | 7 Questions
-                    </p>
+                  <div className="float-end">
+                    <div className="d-flex">
+                      {quiz.publish === false ? (
+                        <button onClick={() => togglePublish(quiz.id)}> <MdUnpublished className="text-danger" /> </button>
+                      ) : (
+                        <button onClick={() => togglePublish(quiz.id)}> <GreenCheckmark /> </button>
+                      )}
+                      <div className="dropdown ms-2">
+                        <button type="button" data-bs-toggle="dropdown" aria-expanded="false" >
+                          <IoEllipsisVertical className="fs-4" />
+                        </button>
+                        <form className="dropdown-menu p-4">
+                          <button className="btn btn-primary mb-3">Edit</button>
+                          <button className="btn btn-primary mb-3">Delete</button>
+                          <button className="btn btn-primary mb-3">Publish</button>
+                        </form>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <LessonControlButtons />
-              </li>
-              <li className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center">
-                  <BsGripVertical className="me-2 fs-3" />
-                  <QuizIcon />
-                  <div>
-                    <a className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0"
-                      href="#/Kanbas/Courses/1234/Quizzes/123">
-                      <h4><b>EXAM 1 FA 23</b></h4>
-                    </a>
-                    <p className="mb-0">
-                      <b>Closed</b> | <b>Due</b> Oct 26 at 5:30pm | 113 pts | 20 Questions
-                    </p>
-                  </div>
-                </div>
-                <LessonControlButtons />
-              </li>
-              <li className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center">
-                  <BsGripVertical className="me-2 fs-3" />
-                  <QuizIcon />
-                  <div>
-                    <a className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0"
-                      href="#/Kanbas/Courses/1234/Quizzes/123">
-                      <h4><b>Q3 - JS, ES6</b></h4>
-                    </a>
-                    <p className="mb-0 ">
-                      Available <span className="text-danger">Multiple dates</span> | Due <span className="text-danger">Multiple dates</span> | 38 pts | 13 Questions
-                    </p>
-                  </div>
-                </div>
-                <LessonControlButtons />
-              </li>
-              <li className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center">
-                  <BsGripVertical className="me-2 fs-3" />
-                  <QuizIcon />
-                  <div>
-                    <a className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0"
-                      href="#/Kanbas/Courses/1234/Quizzes/123">
-                      <h4><b>Q3</b></h4>
-                    </a>
-                    <p className="mb-0 ">
-                      Available <span className="text-danger">Multiple dates</span> | Due <span className="text-danger">Multiple dates</span> | 31 pts | 8 Questions
-                    </p>
-                  </div>
-                </div>
-                <LessonControlButtons />
-              </li>
-              <li className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center">
-                  <BsGripVertical className="me-2 fs-3" />
-                  <QuizIcon />
-                  <div>
-                    <a className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0"
-                      href="#/Kanbas/Courses/1234/Quizzes/123">
-                      <h4><b>Q4 - NODE</b></h4>
-                    </a>
-                    <p className="mb-0">
-                      <b>Closed</b> | <b>Due</b> Nov 20 at 3pm | 25 pts | 4 Questions
-                    </p>
-                  </div>
-                </div>
-                <LessonControlButtons />
-              </li>
-              <li className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center">
-                  <BsGripVertical className="me-2 fs-3" />
-                  <QuizIcon />
-                  <div>
-                    <a className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0"
-                      href="#/Kanbas/Courses/1234/Quizzes/123">
-                      <h4><b>Q5 - MONGO</b></h4>
-                    </a>
-                    <p className="mb-0">
-                      <b>Not available until</b> Nov 30 at 11:40am | <b>Due</b> Nov 30 at 1pm | 38 pts | 10 Questions
-                    </p>
-                  </div>
-                </div>
-                <LessonControlButtons />
-              </li>
-              <li className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center">
-                  <BsGripVertical className="me-2 fs-3" />
-                  <QuizIcon />
-                  <div>
-                    <a className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0"
-                      href="#/Kanbas/Courses/1234/Quizzes/123">
-                      <h4><b>EXAM 2 FA23</b></h4>
-                    </a>
-                    <p className="mb-0">
-                      <b>Not available until</b> Dec 15 at 10:30am | <b>Due</b> Dec 15 at 1pm | 104 pts | 18 Questions
-                    </p>
-                  </div>
-                </div>
-                <LessonControlButtons />
-              </li>
+                </li>
+              ))}
             </ul>
           </li>
         </ul>
       </div>
+      <QuestionEditor />
+
     </div>
+
   );
 }
