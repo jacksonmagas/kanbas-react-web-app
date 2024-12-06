@@ -5,18 +5,35 @@ import { Link, useParams } from "react-router-dom";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { IoEllipsisVertical } from "react-icons/io5";
 import QuizIcon from "./QuizIcon";
+import { MdUnpublished } from "react-icons/md";
+import { IoCheckmarkCircle } from "react-icons/io5";
 import QuestionsEditor from "./QuestionsEditor";
 import { FacultyView } from "../../Account/RoleShownContent";
 import QuestionEditor from "./QuestionEditors";
+import { useState } from "react";
+import GreenCheckmark from "../Modules/GreenCheckmark";
 // import AssignmentControlButtons from "./AssignmentControlButtons";
 
 export default function Quizzes() {
   const { cid } = useParams();
-  const quizzes = [
-    { id: "123", title: "Q1 - HTML", status: "Closed", due: "Sep 21 at 1pm", points: 29, questions: 11 },
-    { id: "124", title: "Q2 - CSS", status: "Closed", due: "Oct 5 at 1pm", points: 32, questions: 7 },
-    // Add more quizzes as needed
-  ];
+
+
+
+
+  const [quizzes, setQuizzes] = useState([
+    { id: "123", title: "Q1 - HTML", status: "Closed", due: "Sep 21 at 1pm", points: 29, questions: 11, publish: false },
+    { id: "124", title: "Q2 - CSS", status: "Closed", due: "Oct 5 at 1pm", points: 32, questions: 7, publish: false },
+  ]);
+
+  const togglePublish = (id: string) => {
+    setQuizzes(prevQuizzes =>
+      prevQuizzes.map(quiz =>
+        quiz.id === id ? { ...quiz, publish: !quiz.publish } : quiz
+      )
+    );
+  };
+
+
 
   return (
     <div>
@@ -26,10 +43,13 @@ export default function Quizzes() {
             className="form-control me-5 border-secondary"
             placeholder="Search for Quiz" />
           <FacultyView>
-            <button id="wd-add-quizzes" className="btn btn-danger d-flex flex-end me-2">
-              <BsPlus className="fs-4" />
-              Quiz
-            </button>
+            <Link className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
+              to={`/Kanbas/Courses/${cid}/Quizzes/new-quiz/edit`}>
+              <button id="wd-add-quizzes" className="btn btn-danger d-flex flex-end me-2">
+                <BsPlus className="fs-4" />
+                Quiz
+              </button>
+            </Link>
           </FacultyView>
           <div className="dropdown d-flex me-1">
             <button id="wd-add-quizzes-group" className="btn btn-secondary" type="button" data-bs-toggle="dropdown">
@@ -49,6 +69,7 @@ export default function Quizzes() {
               <TiArrowSortedDown className="me-2" /><b> Assignment Quizzes</b>
             </div>
 
+
             <ul className="wd-quizzes-list-item list-group rounded-0">
               {quizzes.map(quiz => (
                 <li key={quiz.id} className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
@@ -65,7 +86,25 @@ export default function Quizzes() {
                       </p>
                     </div>
                   </div>
-                  <LessonControlButtons />
+                  <div className="float-end">
+                    <div className="d-flex">
+                      {quiz.publish === false ? (
+                        <button onClick={() => togglePublish(quiz.id)}> <MdUnpublished className="text-danger" /> </button>
+                      ) : (
+                        <button onClick={() => togglePublish(quiz.id)}> <GreenCheckmark /> </button>
+                      )}
+                      <div className="dropdown ms-2">
+                        <button type="button" data-bs-toggle="dropdown" aria-expanded="false" >
+                          <IoEllipsisVertical className="fs-4" />
+                        </button>
+                        <form className="dropdown-menu p-4">
+                          <button className="btn btn-primary mb-3">Edit</button>
+                          <button className="btn btn-primary mb-3">Delete</button>
+                          <button className="btn btn-primary mb-3">Publish</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -73,6 +112,8 @@ export default function Quizzes() {
         </ul>
       </div>
       <QuestionEditor />
+
     </div>
+
   );
 }

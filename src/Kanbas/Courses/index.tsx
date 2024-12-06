@@ -24,7 +24,7 @@ export default function Courses({ courses }: { courses: any[]; }) {
         {course && course.name}
         <FacultyView>
           <button className="btn btn-secondary float-end">
-            <BiGlasses className="fs-4 me-1"/>
+            <BiGlasses className="fs-4 me-1" />
             Student View
           </button>
         </FacultyView>

@@ -1,23 +1,48 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { MdEventAvailable } from "react-icons/md";
+import { useSelector } from "react-redux";
+import { useLocation, useParams } from "react-router";
 
 const quizzes = [
-  { id: "123", title: "Q1 - HTML", type: "Graded Quiz", points: 29, status: "Closed", due: "2023-09-21", shuffle: "Yes", timeLimit: "20 Minutes", attempts: "1", showAnswers: "After submission" },
-  { id: "124", title: "Q2 - CSS", type: "Graded Quiz", points: 32, status: "Closed", due: "2023-10-05", shuffle: "No", timeLimit: "30 Minutes", attempts: "1", showAnswers: "After submission" },
+  { _id: "123", title: "Q1 - HTML", type: "Graded Quiz", points: 29, status: "Closed", due: "2023-09-21", shuffle: "Yes", timeLimit: "20 Minutes", attempts: "1", showAnswers: "After submission" },
+  { _id: "124", title: "Q2 - CSS", type: "Graded Quiz", points: 32, status: "Closed", due: "2023-10-05", shuffle: "No", timeLimit: "30 Minutes", attempts: "1", showAnswers: "After submission" },
   // Add more quizzes as needed
 ];
 
+// const quizzez = useSelector((state: any) => state.quizzesReducer);
+
 export default function DetailsEditor() {
   const { aid } = useParams(); // quiz ID 
+  const { pathname } = useLocation();
   const [quiz, setQuiz] = useState<any>({}); // State
 
-  useEffect(() => {
 
-    const fetchedQuiz = quizzes.find(q => q.id === aid);
-    if (fetchedQuiz) {
+  useEffect(() => {
+    if (pathname.includes("new-quiz")) {
+      setQuiz({
+        title: "Unnamed Quiz",
+        description: "WYSIWYG",
+        quizType: "Graded Quiz",
+        points: "0", //It needs to be the sum of the points for all questions in the quiz
+        assignmentGroup: "Quizzes",
+        shuffleAnswers: "Yes",
+        timeLimit: "20 Minutes",
+        multipleAttempts: "No",
+        showCorrectAnswers: "After Sumbission",
+        accessCode: "",
+        oneQuestionAtATime: "Yes",
+        webcamRequired: "No",
+        lockQuestionsAfterAnswering: "No",
+        // dueDate: dateObjectToHtmlDateString(new Date()),
+        // availableDate:dateObjectToHtmlDateString(new Date()),
+        // untilDate:dateObjectToHtmlDateString(new Date()),
+        questions: [],
+      });
+    } else {
+      const fetchedQuiz = quizzes.find(q => q._id === aid);
       setQuiz(fetchedQuiz);
     }
-  }, [aid]);
+  }, [pathname]);
 
   return (
     <div className="container mt-4">
@@ -75,7 +100,7 @@ export default function DetailsEditor() {
           defaultValue="Assignments"
         >
           <option>ASSIGNMENTS</option>
-          <option>QUIZZE</option>
+          <option>QUIZZES</option>
           <option>Exams</option>
         </select>
       </div>
