@@ -138,25 +138,12 @@ export default function Kanbas() {
       <div id="wd-kanbas">
         <KanbasNavigation />
         <div className="wd-main-content-offset p-3">
-<<<<<<< HEAD
           <h1>Kanbas</h1>
-=======
-        <h1>Kanbas
-        </h1>
->>>>>>> a6
           <Routes>
             <Route path="/" element={<Navigate to="Account" />} />
             <Route path="/Account/*" element={<Account />} />
             <Route path="/Dashboard/*" element={
               <ProtectedRoute>
-<<<<<<< HEAD
-                <Dashboard courses={courses}
-                  course={course}
-                  setCourse={setCourse}
-                  addNewCourse={addNewCourse}
-                  deleteCourse={deleteCourse}
-                  updateCourse={updateCourse} />
-=======
                 <Dashboard  courses={courses}
                             course={course}
                             setCourse={setCourse}
@@ -166,23 +153,10 @@ export default function Kanbas() {
                             enrolling={enrolling}
                             setEnrolling={setEnrolling}
                             updateEnrollment={updateEnrollment}/>
->>>>>>> a6
               </ProtectedRoute>
             } />
             <Route path="/Courses" element={
               <ProtectedRoute>
-<<<<<<< HEAD
-                <Dashboard courses={courses}
-                  course={course}
-                  setCourse={setCourse}
-                  addNewCourse={addNewCourse}
-                  deleteCourse={deleteCourse}
-                  updateCourse={updateCourse} />
-              </ProtectedRoute>
-            } />
-            <Route path="/Courses/:cid/*" element={<EnrollmentProtectedRoute>
-              <Courses courses={courses} />
-=======
                 <Dashboard  courses={courses}
                           course={course}
                           setCourse={setCourse}
@@ -196,7 +170,6 @@ export default function Kanbas() {
             } />
             <Route path="/Courses/:cid/*" element={<EnrollmentProtectedRoute courses={courses}>
               <Courses courses={courses}/>
->>>>>>> a6
             </EnrollmentProtectedRoute>} />
             <Route path="/Calendar" element={<h1>Calendar</h1>} />
             <Route path="/Inbox" element={<h1>Inbox</h1>} />
