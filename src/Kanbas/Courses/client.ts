@@ -28,6 +28,19 @@ export const createCourse = async (course: Course) => {
  return data;
 };
 
+export const findQuizzesForCourse = async (courseId: string) => {
+  const response = await axios.get(`${COURSES_API}/${courseId}/Quizzes`);
+  return response.data;
+};
+
+export const createQuizForCourse = async (courseId: string, quiz: any) => {
+  const response = await axios.post(
+    `${COURSES_API}/${courseId}/Quizzes`,
+    quiz
+  );
+  return response.data;
+};
+
 export const fetchUnenrolledCourses = async (userId: string) => {
     const { data } = await axiosWithCredentials.get(`${COURSES_API}/not/${userId}`);
     return data;
