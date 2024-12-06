@@ -21,7 +21,7 @@ export default function EnrollmentProtectedRoute({children} : {children: React.R
     }
     useEffect(() => {
         fetchEnrollments();
-    }, [enrollments]);
+    }, []);
 
     if (!enrollments.some((e) => {console.log(e); return e.user === currentUser?._id && e.course === cid})) {
         return <Navigate to="/Kanbas/Dashboard" />;
