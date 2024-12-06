@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as client from "./client";
 import { useDispatch } from "react-redux";
-import { isUser, setCurrentUser } from "./reducer";
+import { setCurrentUser } from "./reducer";
 
 interface Passwords {
   original: string,
@@ -29,8 +29,8 @@ export default function Signup() {
     if (validatePasswords(passwords)) {
       try {
         const currentUser = await client.signup({username: username, password: passwords.original});
-        if (isUser(currentUser) || currentUser === null) {
-          dispatch(setCurrentUser(currentUser));
+        dispatch(setCurrentUser(currentUser));
+        if (currentUser) {
           navigate("/Kanbas/Account/Profile");
         }
       } catch (error: unknown) {

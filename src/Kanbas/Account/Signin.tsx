@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isUser, setCurrentUser } from "./reducer";
+import { setCurrentUser } from "./reducer";
 import { useDispatch } from "react-redux";
 import * as client from "./client"
 
@@ -15,8 +15,8 @@ export default function Signin() {
   const navigate = useNavigate();
   const signin = async () => {
     const user = await client.signin(credentials);
-    if (isUser(user)) {
-      dispatch(setCurrentUser(user));
+    dispatch(setCurrentUser(user));
+    if (user) {
       navigate("/Kanbas/Dashboard");
     }
   };

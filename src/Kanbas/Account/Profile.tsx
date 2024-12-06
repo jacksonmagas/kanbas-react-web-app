@@ -1,17 +1,19 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { setCurrentUser } from "./reducer";
+import { setCurrentUser, User } from "./reducer";
 import * as client from "./client"
+import { useKanbasDispatch, useKanbasSelector } from "../../hooks";
 
 export default function Profile() {
-  const [profile, setProfile] = useState<any>({});
-  const dispatch = useDispatch();
+  const [profile, setProfile] = useState<User | null>(null);
+  const dispatch = useKanbasDispatch();
   const navigate = useNavigate();
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { currentUser } = useKanbasSelector(state => state.accountReducer);
   const updateProfile = async () => {
-    const updatedProfile :any = await client.updateUser(profile);
-    dispatch(setCurrentUser(updatedProfile));
+    if (profile) {
+      const updatedProfile = await client.updateUser(profile);
+      dispatch(setCurrentUser(updatedProfile));
+    }
   };
   const fetchProfile = () => {
     if (!currentUser) return navigate("/Kanbas/Account/Signin");
@@ -37,7 +39,7 @@ export default function Profile() {
                  onChange={(e) => setProfile({ ...profile, firstName: e.target.value })}/>
           <input defaultValue={profile.lastName} placeholder="last name" id="wd-lastname" className="form-control mb-2"
                  onChange={(e) => setProfile({ ...profile, lastName:  e.target.value })}/>
-          <input defaultValue={profile.dob} id="wd-dob" className="form-control mb-2"
+          <input defaultValue={profile.dob.slice(0, 10)} id="wd-dob" className="form-control mb-2"
                  onChange={(e) => setProfile({ ...profile, dob: e.target.value })} type="date"/>
           <input defaultValue={profile.email} placeholder="email"
                   id="wd-email" className="form-control mb-2"

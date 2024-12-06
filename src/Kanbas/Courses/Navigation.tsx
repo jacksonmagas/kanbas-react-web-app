@@ -8,7 +8,7 @@ export default function CoursesNavigation() {
     <div id="wd-courses-navigation" className="wd list-group fs-5 rounded-0">
       {links.map((link) => {
         return (
-          <Link to={`/Kanbas/Courses/${cid}/${link}`}
+          <Link key={link} to={`/Kanbas/Courses/${cid}/${link}`}
                 className={`list-group-item border border-0 ${pathname.includes(link) ? "active" : "text-danger"}`}>
             {link}
           </Link>

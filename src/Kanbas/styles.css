@@ -31,7 +31,7 @@ body * {
 }
 
 .list-group-item {
-  --bs-list-group-border-color: gray;
+  --bs-list-group-border-color: grey;
 }
 
 .wd-lesson,

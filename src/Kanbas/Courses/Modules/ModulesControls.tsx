@@ -2,7 +2,7 @@ import { FaPlus } from "react-icons/fa6";
 import GreenCheckmark from "./GreenCheckmark";
 import { CiNoWaitingSign } from "react-icons/ci";
 import ModuleEditor from "./ModuleEditor";
-import { useSelector } from "react-redux";
+import { useKanbasSelector } from "../../../hooks";
 
 function EditControls() {
   return (
@@ -47,10 +47,10 @@ function EditControls() {
 
 export default function ModulesControls({ moduleName, setModuleName, addModule }:
 { moduleName: string; setModuleName: (title: string) => void; addModule: () => void; }) {
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { currentUser } = useKanbasSelector(state => state.accountReducer);
   return (
     <div id="wd-modules-controls" className="text-nowrap">
-      {currentUser.role === "FACULTY" && <EditControls />}
+      {currentUser?.role === "FACULTY" && <EditControls />}
       <button id="wd-collapse-all" className="btn btn-lg btn-secondary me-1 float-end" type="button">
         Collapse All
       </button>

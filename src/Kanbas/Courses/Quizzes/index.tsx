@@ -6,7 +6,7 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { IoEllipsisVertical } from "react-icons/io5";
 import QuizIcon from "./QuizIcon";
 import QuestionsEditor from "./QuestionsEditor";
-import { FacultyView } from "../../Account/RoleShownContent";
+import { RoleView } from "../../Account/RoleShownContent";
 import QuestionEditor from "./QuestionEditors";
 // import AssignmentControlButtons from "./AssignmentControlButtons";
 
@@ -25,12 +25,12 @@ export default function Quizzes() {
           <input id="wd-search-assignment"
             className="form-control me-5 border-secondary"
             placeholder="Search for Quiz" />
-          <FacultyView>
+          <RoleView role="FACULTY">
             <button id="wd-add-quizzes" className="btn btn-danger d-flex flex-end me-2">
               <BsPlus className="fs-4" />
               Quiz
             </button>
-          </FacultyView>
+          </RoleView>
           <div className="dropdown d-flex me-1">
             <button id="wd-add-quizzes-group" className="btn btn-secondary" type="button" data-bs-toggle="dropdown">
               <IoEllipsisVertical className="fs-4" />
@@ -45,10 +45,9 @@ export default function Quizzes() {
 
         <ul id="wd-quizzes-list" className="list-group rounded-0">
           <li className="wd-quizzes-list list-group-item p-0 mb-5 fs-5 border-gray">
-            <div className="wd-quizzess-title p-3 ps-2 bg-secondary">
+            <div className="wd-quizzess-title p-3 ps-2 bg-secondary ">
               <TiArrowSortedDown className="me-2" /><b> Assignment Quizzes</b>
             </div>
-
             <ul className="wd-quizzes-list-item list-group rounded-0">
               {quizzes.map(quiz => (
                 <li key={quiz.id} className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
