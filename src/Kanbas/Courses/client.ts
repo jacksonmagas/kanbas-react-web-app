@@ -2,6 +2,7 @@ import axios from "axios";
 import { Course, isCourse } from "..";
 import { Module, isModule } from "./Modules/reducer";
 import { Assignment, isAssignment } from "./Assignments/reducer";
+import { isUser } from "../Account/reducer";
 const axiosWithCredentials = axios.create({ withCredentials: true });
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
 const COURSES_API = `${REMOTE_SERVER}/api/courses`;
@@ -88,10 +89,10 @@ export const createModuleForCourse = async (courseId: string, module: Module) =>
 export const findAssignmentsForCourse = async (courseId: string) => {
   const response = await axiosWithCredentials
     .get(`${COURSES_API}/${courseId}/assignments`);
-  if (!isAssignment(response.data)) {
+  if (!Array.isArray(response.data)) {
     return null;
   }
-  return response.data;
+  return response.data.filter(isAssignment);
 };
 
 export const createAssignmentForCourse = async (courseId: string, assignment: Assignment) => {
@@ -103,4 +104,12 @@ export const createAssignmentForCourse = async (courseId: string, assignment: As
     return null;
   }
   return response.data;
+};
+
+export const findUsersForCourse = async (courseId: string) => {
+ const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/users`);
+ if (!Array.isArray(response.data)) {
+  return null;
+ }
+ return response.data.filter(isUser);
 };

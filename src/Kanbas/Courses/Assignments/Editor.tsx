@@ -3,7 +3,7 @@ import { addAssignment, editAssignment, updateAssignment, deleteAssignment, Assi
 import * as assignmentClient from "./client"
 import * as coursesClient from "../client"
 import { useKanbasDispatch, useKanbasSelector } from "../../../hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 async function saveAssignment(assignment: Assignment, cid: string, dispatch: any, pathname: string) {
   if (pathname.includes("new-assignment")) {
@@ -21,26 +21,23 @@ export default function AssignmentEditor() {
   const dispatch = useKanbasDispatch();
   const [assignment, setAssignment] = useState(useKanbasSelector(state => state.assignmentsReducer)
     .assignments.find(a => a._id === aid));
-  if (!cid) {
-    return (
-      <div>
-        Error no course ID
-      </div>)
-  }
-  if (pathname.includes("new-assignment")) {
-    setAssignment({
-      _id: "",
-      course: cid,
-      name: "assignment name here",
-      description: "assignment description here",
-      sttime: new Date().toISOString(),
-      duetime: new Date().toISOString(),
-      endtime: new Date().toISOString(),
-      pts: 100
-    });
-  } else {
-  }
-  return assignment && (
+
+  const newAssignment = () => {
+    if (cid && pathname.includes("new-assignment")) {
+      setAssignment({
+        _id: "",
+        course: cid,
+        name: "assignment name here",
+        description: "assignment description here",
+        sttime: new Date().toISOString(),
+        duetime: new Date().toISOString(),
+        endtime: new Date().toISOString(),
+        pts: 100
+      });
+    }}
+
+  useEffect(() => newAssignment());
+  return assignment && cid && (
     <div id="wd-assignments-editor"> 
       <div className="ms-1 row form-group g-4">
         <label htmlFor="wd-name">Assignment Name</label>
