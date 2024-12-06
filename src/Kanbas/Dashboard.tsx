@@ -61,14 +61,14 @@ export default function Dashboard(
       console.error(error);
     }
   }
+  const [enrollmentSwitch, setEnrollmentSwitch] = useState(true);
   useEffect(() => {
     fetchEnrollments();
-  }, [enrollments]);
+  }, [enrollmentSwitch]);
   const isEnrolled = (course: Course) => {
     return enrollments.some((e) => e.course === course._id);
   }
   const dispatch = useKanbasDispatch();
-  let [enrollmentSwitch, setEnrollmentSwitch] = useState(true);
   return (
     <div id="wd-dashboard">
       <div className="d-flex justify-content-between align-items-center" >
