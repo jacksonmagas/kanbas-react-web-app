@@ -1,5 +1,6 @@
-import { useKanbasSelector } from "../../hooks";
+import { useKanbasDispatch, useKanbasSelector } from "../../hooks";
 import { ReactNode } from "react";
+import { setCurrentView } from "../viewReducer";
 
 /**
  * Conditionally renders its children based on the user's role and view.
@@ -25,6 +26,10 @@ import { ReactNode } from "react";
 export function RoleView({ children, role, loose = false }: { children: ReactNode, role: string, loose?: boolean }) {
   const { currentUser } = useKanbasSelector(state => state.accountReducer);
   const { currentView } = useKanbasSelector(state => state.viewReducer);
+  const dispatch = useKanbasDispatch();
+  if (!currentView && currentUser) {
+    dispatch(setCurrentView(currentUser?.role));
+  }
   const compare = (l: boolean, r: boolean) => loose ? l || r : l && r;
   if (compare(currentUser?.role === role, currentView === role)) {
     return children;

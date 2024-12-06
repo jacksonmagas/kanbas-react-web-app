@@ -1,10 +1,6 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { useKanbasDispatch, useKanbasSelector } from "../hooks";
+import { useKanbasSelector } from "../hooks";
 import { Course } from ".";
-import { User } from "./Account/reducer";
-import { addEnrollment, deleteEnrollment, setEnrollments } from "./enrollmentsReducer";
-import * as client from "./client";
 import { RoleView } from "./Account/RoleShownContent";
 import ViewButton from "./ViewChangeButton";
 
@@ -39,36 +35,16 @@ function NewCourse({ addNewCourse,
     );
 }
 
-function isFaculty(user : User) {
-  return user.role === "FACULTY";
-}
-
 export default function Dashboard(
 { courses, course, setCourse, addNewCourse,
-  deleteCourse, updateCourse }: {
+  deleteCourse, updateCourse, enrolling, setEnrolling, updateEnrollment }: {
   courses: Course[]; course: Course; setCourse: (course: Course) => void;
   addNewCourse: () => void; deleteCourse: (courseId: string) => void;
-  updateCourse: () => void; }
-) {
+  updateCourse: () => void; enrolling: boolean, setEnrolling: (enrolling: boolean) => void
+  updateEnrollment: (courseId: string, enrolled: boolean) => void}) {
   const { currentUser } = useKanbasSelector(state => state.accountReducer);
-  const { enrollments } = useKanbasSelector(state => state.enrollmentsReducer);
+  const { currentView } = useKanbasSelector(state => state.viewReducer);
 
-  const fetchEnrollments = async () => {
-    try {
-      const enrollments = await client.getEnrollments(currentUser?._id ?? "");
-      dispatch(setEnrollments(enrollments));
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  const [enrollmentSwitch, setEnrollmentSwitch] = useState(true);
-  useEffect(() => {
-    fetchEnrollments();
-  }, [enrollmentSwitch]);
-  const isEnrolled = (course: Course) => {
-    return enrollments.some((e) => e.course === course._id);
-  }
-  const dispatch = useKanbasDispatch();
   return (
     <div id="wd-dashboard">
       <div className="d-flex justify-content-between align-items-center" >
@@ -81,18 +57,15 @@ export default function Dashboard(
       <RoleView role="FACULTY">
         <NewCourse addNewCourse={addNewCourse} updateCourse={updateCourse} setCourse={setCourse} course={course} />
       </RoleView>
-      <RoleView role="STUDENT" loose>
-        <button className="btn btn-primary float-end"
-          onClick={() => setEnrollmentSwitch(!enrollmentSwitch)}> Enrollments </button>
-      </RoleView>
+      <button className="btn btn-primary float-end"
+        onClick={() => setEnrolling(!enrolling)}> {enrolling ? "My Courses" : "All Courses"} </button>
       <h2 id="wd-dashboard-published">
-        {currentUser && isFaculty(currentUser) ? "Published " : enrollmentSwitch ? "Enrolled " : "All "}
-        Courses ({!enrollmentSwitch ? courses.length : courses.filter(isEnrolled).length})
+        {currentUser && (!enrolling ? currentView === "FACULTY" ? "Published " : "Enrolled " : "All ")}
+        Courses ({courses.length})
         </h2> <hr />
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4">
           {courses
-            //.filter((course) => !enrollmentSwitch || isEnrolled(course))
             .map((course) => (
               <div key={course._id} className="wd-dashboard-course col" style={{ width: "300px" }}>
                 <div className="card rounded-3 overflow-hidden">
@@ -123,25 +96,12 @@ export default function Dashboard(
                         </button>
                       </RoleView>
                       <RoleView role="STUDENT" loose>
-                        {!enrollmentSwitch && <button id="wd-enrollment-course-click"
+                        {enrolling && <button id="wd-enrollment-course-click"
                           onClick={(event) => {
                             event.preventDefault();
-                            if (!currentUser) return;
-                            const enrollment = enrollments.find((e) => e.course === course._id)
-                                            ?? {
-                                              course: course._id,
-                                              user: currentUser._id,
-                                              _id: new Date().getTime().toString()
-                                            };
-                          if (isEnrolled(course)) {
-                            client.unenroll(currentUser._id, course._id);
-                            dispatch(deleteEnrollment(enrollment));
-                          } else {
-                            client.enroll(currentUser._id, course._id);
-                            dispatch(addEnrollment(enrollment));
-                          }}}
-                          className={`btn ${isEnrolled(course) ? "btn-danger" : "btn-success"} me-2 float-end`} >
-                          {isEnrolled(course) ? "Unenroll" : "Enroll"}
+                            updateEnrollment(course._id, !course.enrolled)}}
+                          className={`btn ${course.enrolled ? "btn-danger" : "btn-success"} me-2 float-end`} >
+                          {course.enrolled ? "Unenroll" : "Enroll"}
                         </button>}
                       </RoleView>
                     </div>

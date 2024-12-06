@@ -11,8 +11,9 @@ import DetailsEditor from "./Quizzes/DetailsEditor";
 import Details from "./Quizzes/Details";
 import QuizPreview from "./Quizzes/QuizPreview";
 import ViewButton from "../ViewChangeButton";
+import { Course } from "..";
 
-export default function Courses({ courses }: { courses: any[]; }) {
+export default function Courses({ courses }: { courses: Course[]; }) {
   const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
   return (

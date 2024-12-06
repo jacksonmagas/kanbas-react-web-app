@@ -1,8 +1,16 @@
 import axios from "axios";
-import { isCourse } from "..";
+import { Course, isCourse } from "..";
+import { Module, isModule } from "./Modules/reducer";
+import { Assignment, isAssignment } from "./Assignments/reducer";
 const axiosWithCredentials = axios.create({ withCredentials: true });
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
 const COURSES_API = `${REMOTE_SERVER}/api/courses`;
+
+function exportCourse(c : Course) {
+  let temp = c;
+  delete temp.enrolled;
+  return temp;
+}
 
 export const fetchAllCourses = async () => {
   const { data } = await axiosWithCredentials.get(COURSES_API);
@@ -10,6 +18,14 @@ export const fetchAllCourses = async () => {
     return null;
   }
   return data.filter(isCourse);
+};
+
+export const createCourse = async (course: Course) => {
+ const { data } = await axiosWithCredentials.post(`${COURSES_API}`, exportCourse(course));
+ if (!isCourse(data)) {
+  return null;
+ }
+ return data;
 };
 
 export const fetchUnenrolledCourses = async (userId: string) => {
@@ -22,35 +38,56 @@ export const deleteCourse = async (id: string) => {
   return data;
 };
 
-export const updateCourse = async (course: any) => {
-  const { data } = await axiosWithCredentials.put(`${COURSES_API}/${course._id}`, course);
+export const updateCourse = async (course: Course) => {
+  const { data } = await axiosWithCredentials.put(`${COURSES_API}/${course._id}`, exportCourse(course));
+  if (!isCourse(data)) {
+    return null;
+  }
   return data;
 };
 
 export const findModulesForCourse = async (courseId: string) => {
   const response = await axiosWithCredentials
     .get(`${COURSES_API}/${courseId}/modules`);
-  return response.data;
+  if (!Array.isArray(response.data)) {
+    return null;
+  }
+  return response.data.map(d => ({ ...d, editing: false })).filter(isModule);
 };
 
-export const createModuleForCourse = async (courseId: string, module: any) => {
+export const createModuleForCourse = async (courseId: string, module: Module) => {
+  const toSend = { lessons: module.lessons, name: module.name, course: module.course, description: module.description };
   const response = await axiosWithCredentials.post(
     `${COURSES_API}/${courseId}/modules`,
-    module
+    toSend
   );
-  return response.data;
+  if (response.data && typeof response.data === "object") {
+    const result = { ...response.data, editing: false }
+    if (!isModule(result)) {
+      return null;
+    }
+    return result;
+  } else {
+    return null;
+  }
 };
 
 export const findAssignmentsForCourse = async (courseId: string) => {
   const response = await axiosWithCredentials
     .get(`${COURSES_API}/${courseId}/assignments`);
+  if (!isAssignment(response.data)) {
+    return null;
+  }
   return response.data;
 };
 
-export const createAssignmentForCourse = async (courseId: string, assignment: any) => {
+export const createAssignmentForCourse = async (courseId: string, assignment: Assignment) => {
   const response = await axiosWithCredentials.post(
     `${COURSES_API}/${courseId}/assignments`,
     assignment
   );
+  if (!isAssignment(response.data)) {
+    return null;
+  }
   return response.data;
 };
