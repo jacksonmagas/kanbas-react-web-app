@@ -5,11 +5,8 @@ export type Assignment = {
   course : string,
   name : string,
   description : string,
-  stday : string,
   sttime : string,
-  dueday : string,
   duetime : string,
-  endday : string,
   endtime : string,
   pts : number,
 }
@@ -22,11 +19,8 @@ export function isAssignment(obj: unknown): obj is Assignment {
     typeof (obj as Assignment).course === "string" &&
     typeof (obj as Assignment).name === "string" &&
     typeof (obj as Assignment).description === "string" &&
-    typeof (obj as Assignment).stday === "string" &&
     typeof (obj as Assignment).sttime === "string" &&
-    typeof (obj as Assignment).dueday === "string" &&
     typeof (obj as Assignment).duetime === "string" &&
-    typeof (obj as Assignment).endday === "string" &&
     typeof (obj as Assignment).endtime === "string" &&
     typeof (obj as Assignment).pts === "number"
   );

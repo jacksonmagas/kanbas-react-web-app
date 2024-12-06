@@ -36,7 +36,7 @@ export default function Assignments() {
   }, []);
 
   function AssignmentPanel(assignment :Assignment) {
-    const {_id, course, name, stday, sttime, dueday, duetime, pts} = assignment;
+    const {_id, course, name, sttime, duetime, pts} = assignment;
     return (
       <div className="d-flex align-items-center">
         <BsGripVertical className="fs-4 me-2"/>
@@ -48,10 +48,10 @@ export default function Assignments() {
           </a>
           <br />
           <span className="text-danger"> Multiple Modules </span> | <strong> Not available until </strong>
-          {new Date(stday + "T00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) + " at " + sttime} |
+          {new Date(sttime + "T00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) + " at " + sttime} |
           <br/>
           <strong> Due </strong>
-          {new Date(dueday + "T00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) + " at " + duetime} | {pts}pts
+          {new Date(duetime + "T00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) + " at " + duetime} | {pts}pts
         </div>
         <div className="flex-end">
           <BiTrash className="fs-4 me-2" onClick={() => removeAssignment(assignment)}/>
