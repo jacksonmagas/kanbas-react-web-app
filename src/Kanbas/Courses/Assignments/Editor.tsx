@@ -111,17 +111,17 @@ export default function AssignmentEditor() {
           <label htmlFor="wd-assign-to" className="fw-bold mb-2"> Assign to </label>
           <input type="text" id="wd-assign-to" value="Everyone" className="form-control border-secondary mb-4"/>
           <label htmlFor="wd-due-date" className="fw-bold mb-2" defaultValue={assignment.duetime}> Due </label>
-          <input type="date" id="wd-due-date" className="form-control border-secondary mb-4" defaultValue={assignment.duetime}
+          <input type="date" id="wd-due-date" className="form-control border-secondary mb-4" defaultValue={assignment.duetime.substring(0,10)}
             onChange={(e) => {setAssignment({...assignment, duetime: e.target.value})}}/>
           <div className="d-flex">
             <div className="flex-fill me-2">
               <label htmlFor="wd-available-from" className="fw-bold mb-2"> Available from </label>
-              <input type="date" id="wd-available-from" className="form-control border-secondary" defaultValue={assignment.sttime}
+              <input type="date" id="wd-available-from" className="form-control border-secondary" defaultValue={assignment.sttime.substring(0,10)}
                 onChange={(e) => {setAssignment({...assignment, sttime: e.target.value})}}/>
             </div>
             <div className="flex-fill">
               <label htmlFor="wd-available-until" className="fw-bold mb-2"> Until </label>
-              <input type="date" id="wd-available-until" className="form-control border-secondary" defaultValue={assignment.endtime}
+              <input type="date" id="wd-available-until" className="form-control border-secondary" defaultValue={assignment.endtime.substring(0,10)}
                 onChange={(e) => {setAssignment({...assignment, endtime: e.target.value})}}/>
             </div>
           </div>
