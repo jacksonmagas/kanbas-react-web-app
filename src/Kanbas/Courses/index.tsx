@@ -7,7 +7,6 @@ import AssignmentEditor from "./Assignments/Editor";
 import Quizzes from "./Quizzes";
 import { FaAlignJustify } from "react-icons/fa6";
 import PeopleTable from "./People/Table";
-import DetailsEditor from "./Quizzes/DetailsEditor";
 import Details from "./Quizzes/Details";
 import QuizPreview from "./Quizzes/QuizPreview";
 import ViewButton from "../ViewChangeButton";
@@ -15,6 +14,8 @@ import { Course } from "..";
 import { useEffect, useState } from "react";
 import { User } from "../Account/reducer";
 import { findUsersForCourse } from "./client";
+import QuizEditor from "./Quizzes/QuizEditor";
+import QuestionEditor from "./Quizzes/QuestionEditors";
 
 export default function Courses({ courses }: { courses: Course[]; }) {
   const { cid } = useParams();
@@ -54,9 +55,9 @@ export default function Courses({ courses }: { courses: Course[]; }) {
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentEditor />} />
             <Route path="Quizzes" element={<Quizzes />} />
-            <Route path="Quizzes/:aid" element={<Details />} />
-            <Route path="Quizzes/:aid/edit" element={<DetailsEditor />} />
-            <Route path="Quizzes/:aid/preview" element={<QuizPreview />} />
+            <Route path="Quizzes/:qid" element={<Details />} />
+            <Route path="Quizzes/:qid/edit/*" element={<QuizEditor />} />
+            <Route path="Quizzes/:qid/preview" element={<QuizPreview />} />
             <Route path="People" element={<PeopleTable users={users}/>} />
           </Routes>
         </div>

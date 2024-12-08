@@ -1,73 +1,67 @@
-import React, { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; 
+import { QuizQuestion } from ".";
 
 type Answer = {
   text: string;
   correct: boolean;
 };
 
-export interface MultipleChoiceQuestion {
-  question: string,
-  answers: Answer[]
+export interface MultipleChoiceAnswer {
+  answers: Answer[],
 }
 
-const MultipleChoiceEditor: React.FC = () => {
-  const [title, setTitle] = useState<string>("");
-  const [points, setPoints] = useState<number>(0);
-  const [question, setQuestion] = useState<string>("");
-  const [answers, setAnswers] = useState<Answer[]>([
-    { text: "", correct: false },
-  ]);
+function isAnswer(obj: any): obj is Answer {
+  return obj && typeof obj.text === 'string' && typeof obj.correct === 'boolean';
+}
 
+export function isMultipleChoiceAnswer(obj: any): obj is MultipleChoiceAnswer {
+  return (
+    obj &&
+    Array.isArray(obj.answers) &&
+    obj.answers.every(isAnswer)
+  );
+}
+
+const MultipleChoiceEditor = ({question, setQuestion} : {question: QuizQuestion, setQuestion : (question: QuizQuestion) => void}) => {
   const handleQuestionChange = (value: string): void => {
-    setQuestion(value);
+    setQuestion({...question, question: value});
   };
 
+  const setAnswers = (answers: Answer[]) => {
+    setQuestion({...question, answer: {answers: answers}})
+  }
+
   const addAnswer = (): void => {
-    setAnswers([...answers, { text: "", correct: false }]);
+    if (isMultipleChoiceAnswer(question.answer)) {
+      setAnswers([...question.answer.answers, { text: "", correct: false }]);
+    } else {
+      setAnswers([{ text: "", correct: true }]);
+    }
   };
 
   const removeAnswer = (index: number): void => {
-    setAnswers(answers.filter((_, i) => i !== index));
+    if (isMultipleChoiceAnswer(question.answer)) {
+      setAnswers(question.answer.answers.filter((_, i) => i !== index));
+    }
   };
 
   const handleAnswerTextChange = (index: number, value: string): void => {
-    const updatedAnswers = [...answers];
-    updatedAnswers[index].text = value;
-    setAnswers(updatedAnswers);
+    if (isMultipleChoiceAnswer(question.answer)) {
+      const updatedAnswers = [...question.answer.answers];
+      updatedAnswers[index].text = value;
+      setAnswers(updatedAnswers);
+    }
   };
 
   const handleCorrectAnswerChange = (index: number): void => {
-    const updatedAnswers = answers.map((answer, i) => ({
-      ...answer,
-      correct: i === index,
-    }));
-    setAnswers(updatedAnswers);
-  };
-
-  const handleSave = (): void => {
-    const trimmedAnswers = answers
-      .map((a) => ({ ...a, text: a.text.trim() }))
-      .filter((a) => a.text !== "");
-    if (!question || trimmedAnswers.length === 0) {
-      alert("Please fill in all fields before saving.");
-      return;
+    if (isMultipleChoiceAnswer(question.answer)) {
+      const updatedAnswers = question.answer.answers.map((answer, i) => ({
+        ...answer,
+        correct: i === index,
+      }));
+      setAnswers(updatedAnswers);
     }
-
-    const questionData: MultipleChoiceQuestion = {
-      question,
-      answers: trimmedAnswers,
-    };
-    console.log("Saved Question:", questionData);
-    alert("Question saved successfully!");
-  };
-
-  const handleCancel = (): void => {
-    setTitle("");
-    setPoints(0);
-    setQuestion("");
-    setAnswers([{ text: "", correct: false }]);
   };
 
   return (
@@ -97,7 +91,7 @@ const MultipleChoiceEditor: React.FC = () => {
           </div>
         </div>
         <ReactQuill
-          value={question}
+          value={question.question}
           onChange={handleQuestionChange}
           style={{
             marginTop: "10px",
@@ -109,7 +103,7 @@ const MultipleChoiceEditor: React.FC = () => {
       </div>
       <div style={{ marginTop: "20px" }}>
         <h3>Answers:</h3>
-        {answers.map((answer, index) => (
+        {isMultipleChoiceAnswer(question.answer) && question.answer.answers.map((answer, index) => (
           <div
             key={index}
             style={{
@@ -144,7 +138,7 @@ const MultipleChoiceEditor: React.FC = () => {
             >
               {answer.correct ? "✓ Correct Answer" : "Mark as Correct"}
             </button>
-            {answers.length > 1 && (
+            {isMultipleChoiceAnswer(question.answer) && question.answer.answers.length > 1 && (
               <button
                 onClick={() => removeAnswer(index)}
                 style={{
@@ -172,35 +166,6 @@ const MultipleChoiceEditor: React.FC = () => {
           }}
         >
           + Add Another Answer
-        </button>
-      </div>
-      <div style={{ marginTop: "30px", textAlign: "left" }}>
-        <button
-          onClick={handleSave}
-          style={{
-            padding: "10px 15px",
-            marginRight: "10px",
-            backgroundColor: "#f44336",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Update Question
-        </button>
-        <button
-          onClick={handleCancel}
-          style={{
-            padding: "10px 15px",
-            backgroundColor: "#D3D3D3",
-            color: "black",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Cancel
         </button>
       </div>
     </div>

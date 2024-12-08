@@ -1,39 +1,28 @@
 import { BsGripVertical, BsPlus } from "react-icons/bs";
-import LessonControlButtons from "../Modules/LessonControlButtons";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { Link, useParams } from "react-router-dom";
-import { FaMagnifyingGlass } from "react-icons/fa6";
 import { IoEllipsisVertical } from "react-icons/io5";
 import QuizIcon from "./QuizIcon";
 import { MdUnpublished } from "react-icons/md";
-import { IoCheckmarkCircle } from "react-icons/io5";
-import QuestionsEditor from "./QuestionsEditor";
-import { RoleView } from "../../Account/RoleShownContent";
 import QuestionEditor from "./QuestionEditors";
 import { useState } from "react";
 import GreenCheckmark from "../Modules/GreenCheckmark";
+import QuizEditor from "./QuizEditor";
+import { useKanbasDispatch, useKanbasSelector } from "../../../hooks";
+import { updateQuiz } from "./quizzesReducer";
 // import AssignmentControlButtons from "./AssignmentControlButtons";
 
 export default function Quizzes() {
   const { cid } = useParams();
-
-
-
-
-  const [quizzes, setQuizzes] = useState([
-    { id: "123", title: "Q1 - HTML", status: "Closed", due: "Sep 21 at 1pm", points: 29, questions: 11, publish: false },
-    { id: "124", title: "Q2 - CSS", status: "Closed", due: "Oct 5 at 1pm", points: 32, questions: 7, publish: false },
-  ]);
+  const { quizzes } = useKanbasSelector(state => state.quizzesReducer); 
+  const dispatch = useKanbasDispatch();
 
   const togglePublish = (id: string) => {
-    setQuizzes(prevQuizzes =>
-      prevQuizzes.map(quiz =>
-        quiz.id === id ? { ...quiz, publish: !quiz.publish } : quiz
-      )
-    );
+    const quiz = quizzes.find(q => q._id === id);
+    if (quiz) {
+      dispatch(updateQuiz({...quiz, published: !quiz.published}));
+    }
   };
-
-
 
   return (
     <div>
@@ -68,27 +57,27 @@ export default function Quizzes() {
             </div>
             <ul className="wd-quizzes-list-item list-group rounded-0">
               {quizzes.map(quiz => (
-                <li key={quiz.id} className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
+                <li key={quiz._id} className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
                   <div className="d-flex align-items-center">
                     <BsGripVertical className="me-2 fs-3" />
                     <QuizIcon />
                     <div>
                       <Link className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
-                        to={`/Kanbas/Courses/${cid}/Quizzes/${quiz.id}`}>
+                        to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}>
                         <h4><b>{quiz.title}</b></h4>
                       </Link>
                       <p className="mb-0">
-                        <b>{quiz.status}</b> | <b>Due</b> {quiz.due} | {quiz.points} pts | {quiz.questions} Questions
+                        <b>{/*quiz.status*/}</b> | <b>Due</b> {quiz.due} | {quiz.points} pts | {quiz.questions.length} Questions
                       </p>
                     </div>
                   </div>
                   <div className="float-end">
                     <div className="d-flex">
-                      {quiz.publish === false ? (
-                        <button onClick={() => togglePublish(quiz.id)}> <MdUnpublished className="text-danger" /> </button>
-                      ) : (
-                        <button onClick={() => togglePublish(quiz.id)}> <GreenCheckmark /> </button>
-                      )}
+                      <button onClick={() => togglePublish(quiz._id)}>
+                        {quiz.published === false 
+                          ? <MdUnpublished className="text-danger" />
+                          : <GreenCheckmark />}
+                      </button>
                       <div className="dropdown ms-2">
                         <button type="button" data-bs-toggle="dropdown" aria-expanded="false" >
                           <IoEllipsisVertical className="fs-4" />
@@ -107,9 +96,6 @@ export default function Quizzes() {
           </li>
         </ul>
       </div>
-      <QuestionEditor />
-
     </div>
-
   );
 }

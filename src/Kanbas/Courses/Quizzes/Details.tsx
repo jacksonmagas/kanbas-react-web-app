@@ -1,4 +1,3 @@
-import React from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaPencilAlt } from "react-icons/fa";
 
@@ -11,8 +10,8 @@ const quizzes = [
 
 export default function Details() {
     const navigate = useNavigate();
-    const { aid } = useParams(); // Get the quiz ID from the URL
-    const quiz = quizzes.find(q => q.id === aid); // Find the quiz based on the ID
+    const { qid } = useParams(); // Get the quiz ID from the URL
+    const quiz = quizzes.find(q => q.id === qid); // Find the quiz based on the ID
 
     if (!quiz) {
         return <div>Quiz not found</div>; // Handle case where quiz is not found

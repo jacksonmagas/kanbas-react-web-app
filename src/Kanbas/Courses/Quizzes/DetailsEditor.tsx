@@ -1,155 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { MdEventAvailable, MdUnpublished } from "react-icons/md";
-import { useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useState } from "react";
+import { MdUnpublished } from "react-icons/md";
 import GreenCheckmark from "../Modules/GreenCheckmark";
-import { Assignment } from "../Assignments/reducer";
-import * as coursesClient from "../client"
-import { addAssignment } from "../Assignments/reducer";
-import { useDispatch } from "react-redux";
-import { addQuiz } from "./quizzesReducer";
+import { AssignmentGroup, Quiz, QuizType } from "./quizzesReducer";
 
-const quizzes = [
-  { _id: "123", title: "Q1 - HTML", type: "Graded Quiz", points: 29, status: "Closed", due: "2023-09-21", shuffle: "Yes", timeLimit: "20 Minutes", attempts: "1", showAnswers: "After submission", questions: [], publish: true },
-  { _id: "124", title: "Q2 - CSS", type: "Graded Quiz", points: 32, status: "Closed", due: "2023-10-05", shuffle: "No", timeLimit: "30 Minutes", attempts: "1", showAnswers: "After submission", publish: false, questions: [] },
-
-];
-
-
-
-
-// const quizzez = useSelector((state: any) => state.quizzesReducer);
-
-export default function DetailsEditor() {
-  const { aid, cid } = useParams(); // quiz ID 
-  const { pathname } = useLocation();
-  const [quiz, setQuiz] = useState<any>({}); // State
-  const dispatch = useDispatch();
-
-  const navigate = useNavigate();
-
-
-
-  const addQuizForCourse = async () => {
-    if (!aid) return;
-    const newQuiz = {
-      title: quiz.title,
-      course: cid,
-      description: quiz.description,
-      quizType: quiz.quizType,
-      points: quiz.points, //It needs to be the sum of the points for all questions in the quiz
-      assignmentGroup: quiz.assignmentGroup,
-      shuffleAnswers: quiz.shuffleAnswers,
-      timeLimit: quiz.timeLimit,
-      multipleAttempts: quiz.multipleAttempts,
-      showCorrectAnswers: quiz.showCorrectAnswers,
-      accessCode: quiz.accessCode,
-      oneQuestionAtATime: quiz.oneQuestionAtATime,
-      webcamRequired: quiz.webcamRequired,
-      lockQuestionsAfterAnswering: quiz.lockQuestionsAfterAnswering,
-      dueDate: quiz.dueDate,
-      availableDate: quiz.availableDate,
-      untilDate: quiz.untilDate,
-      questions: quiz.questions,
-      publish: false,
-    };
-    try {
-      // const newQuiz = await coursesClient.createQuizForCourse(cid ?? "", quiz);
-      // dispatch(addQuiz(newQuiz));
-      navigate(`/Kanbas/Courses/${cid}/Quizzes`);
-    } catch (error) {
-      console.error("Failed to create quiz:", error);
-    }
-  };
-  const updateQuizForCourse = async () => {
-    if (!aid) return;
-    const quizUp = {
-      ...quiz,
-    };
-    try {
-      const updatedQuiz = await coursesClient.updateQuizForCourse(cid ?? "", quizUp);
-      dispatch(addQuiz(updatedQuiz));
-      navigate(`/Kanbas/Courses/${cid}/Quizzes`);
-    } catch (error) {
-      console.error("Failed to update quiz:", error);
-    }
-  };
-
-  const handleCancelQuiz = () => {
-    if (pathname.includes('new-quiz')) {
-      navigate(`/Kanbas/Courses/${cid}/Quizzes`);
-    }
-    else {
-      navigate(`/Kanbas/Courses/${cid}/Quizzes/${aid}`);
-    }
-  }
-
-  // async function saveAssignment() {
-  //   if (pathname.includes("new-assignment")) {
-  //     await coursesClient.createQuizForCourse(cid ?? "", quiz)
-  //     dispatch(addAssignment(assignment))
-  //   } else {
-  //     await assignmentClient.updateAssignment(assignment)
-  //     dispatch(updateAssignment(assignment));
-  //   }
-  // }
-
-
-  const handleSaveQuiz = () => {
-    if (pathname.includes('new-quiz')) {
-
-      addQuizForCourse();
-
-      //createQuiz
-      navigate(`/Kanbas/Courses/${cid}/Quizzes`);
-    }
-    else {
-      //updateQuiz
-
-      updateQuizForCourse();
-
-      navigate(`/Kanbas/Courses/${cid}/Quizzes/${aid}`);
-    }
-  }
-
-
-  useEffect(() => {
-    if (pathname.includes("new-quiz")) {
-      setQuiz({
-        title: "Unnamed Quiz",
-        description: "WYSIWYG",
-        quizType: "Graded Quiz",
-        points: "0", //It needs to be the sum of the points for all questions in the quiz
-        assignmentGroup: "Quizzes",
-        shuffleAnswers: "Yes",
-        timeLimit: "20",
-        multipleAttempts: "No",
-        showCorrectAnswers: "After Sumbission",
-        accessCode: "",
-        oneQuestionAtATime: "Yes",
-        webcamRequired: "No",
-        lockQuestionsAfterAnswering: "No",
-        dueDate: new Date().toISOString(),
-        availableDate: new Date().toISOString(),
-        untilDate: new Date().toISOString(),
-        questions: [],
-        publish: false,
-      });
-    } else {
-      const fetchedQuiz = quizzes.find(q => q._id === aid);
-      setQuiz(fetchedQuiz);
-    }
-  }, [pathname]);
-
-
-
-  return (
+export default function DetailsEditor({quiz, setQuiz } : {quiz: Quiz, setQuiz : (quiz: Quiz) => void}) {
+  const [multipleAttempts, setMultipleAttempts] = useState(false);
+  return quiz ? (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center">
         <h2>Quiz</h2>
         <div className="text-end">
           <h3>Points {quiz.questions ? quiz.questions.length : 0}</h3>
-          {quiz.publish === false ? (
+          {quiz.published === false ? (
             <h5><MdUnpublished className="text-danger" /> Not Published </h5>
           ) : (
             <h3><GreenCheckmark /> Published </h3>
@@ -163,7 +25,7 @@ export default function DetailsEditor() {
         </label>
         <input
           type="text"
-          className="form-control"
+          className="form-control border-secondary"
           id="assignmentName"
           value={quiz.title}
           onChange={(e) => setQuiz({ ...quiz, title: e.target.value })}
@@ -176,7 +38,7 @@ export default function DetailsEditor() {
           Quiz Instructions
         </label>
         <textarea
-          className="form-control"
+          className="form-control border-secondary"
           id="description"
           rows={5}
           placeholder="The Quiz is available online..."
@@ -188,18 +50,12 @@ export default function DetailsEditor() {
       {/* Quiz Type, Assignment Group,*/}
       <div className="mb-3">
         <label htmlFor="assignmentGroup" className="form-label">
-          {" "}
           Quiz Type
         </label>
-        <select
-          className="form-control"
-          id="assignmentGroup"
-          value={quiz.quizType}
-          onChange={(e) => setQuiz({ ...quiz, quizType: e.target.value })}
-
-        >
-          <option>Graded Quiz</option>
-          <option>Ungraded Quiz</option>
+        <select className="form-control border-secondary" id="assignmentGroup" value={quiz.type}
+              onChange={(e) => setQuiz({ ...quiz, type: parseInt(e.target.value) })}>
+          <option value={QuizType.GRADED}>Graded Quiz</option>
+          <option value={QuizType.UNGRADED}>Ungraded Quiz</option>
         </select>
       </div>
 
@@ -208,15 +64,14 @@ export default function DetailsEditor() {
           Assignment Group
         </label>
         <select
-          className="form-control"
+          className="form-control border-secondary"
           id="assignmentGroup"
-          value={quiz.assignmentGroup}
-          onChange={(e) => setQuiz({ ...quiz, quizType: e.target.value })}
-        >
-          <option>Assignments</option>
-          <option>Quizzes</option>
-          <option>Exams</option>
-          <option>Project</option>
+          value={quiz.group}
+          onChange={(e) => setQuiz({ ...quiz, group: parseInt(e.target.value) })}>
+          <option value={AssignmentGroup.ASSIGNMENTS}>Assignments</option>
+          <option value={AssignmentGroup.QUIZZES}>Quizzes</option>
+          <option value={AssignmentGroup.EXAMS}>Exams</option>
+          <option value={AssignmentGroup.PROJECTS}>Projects</option>
         </select>
       </div>
 
@@ -230,13 +85,13 @@ export default function DetailsEditor() {
           <div className="form-check">
             <input
               type="checkbox"
-              className="form-check-input"
+              className="form-check-input border-secondary"
               id="shuffleAnswers"
-            />
+              checked={quiz.shuffleAnswers}
+              onChange={e => setQuiz({...quiz, shuffleAnswers: e.target.checked})} />
             <label
               className="form-check-label"
-              htmlFor="shuffleAnswers"
-            >
+              htmlFor="shuffleAnswers">
               Shuffle Answers
             </label>
           </div>
@@ -245,21 +100,21 @@ export default function DetailsEditor() {
           <div className="form-check mt-2 d-flex align-items-center">
             <input
               type="checkbox"
-              className="form-check-input"
+              className="form-check-input border-secondary"
               id="timeLimit"
             />
             <label
-              className="form-check-label me-2"
+              className="form-check-label me-2 ms-2"
               htmlFor="timeLimit"
             >
               Time Limit
             </label>
             <input
               type="number"
-              className="form-control"
+              className="form-control border-secondary"
               id="timeLimitMinutes"
               value={quiz.timeLimit}
-              onChange={(e) => setQuiz({ ...quiz, timeLimit: e.target.value })}
+              onChange={(e) => setQuiz({ ...quiz, timeLimit: parseInt(e.target.value) })}
               style={{ width: '80px' }}
             />
             <span className="ms-2">Minutes</span>
@@ -269,13 +124,13 @@ export default function DetailsEditor() {
           <div className="form-check mt-2">
             <input
               type="checkbox"
-              className="form-check-input"
+              checked={multipleAttempts}
+              className="form-check-input border-secondary"
               id="multipleAttempts"
-            />
+              onChange={e => setMultipleAttempts(e.target.checked)}/>
             <label
               className="form-check-label"
-              htmlFor="multipleAttempts"
-            >
+              htmlFor="multipleAttempts">
               Allow Multiple Attempts
             </label>
           </div>
@@ -296,19 +151,15 @@ export default function DetailsEditor() {
             </label>
             <input
               type="text"
-              className="form-control mb-2"
+              className="form-control mb-2 border-secondary"
               id="assignTo"
               defaultValue="Everyone"
-              readOnly
-            />
-
-
+              readOnly />
             <label htmlFor="dueDate" className="form-label">
               Due
             </label>
-            <input type="date" className="form-control mb-2" id="dueDate" defaultValue={quiz.dueDate} />
-
-
+            <input type="date" className="form-control mb-2 border-secondary" id="dueDate" defaultValue={quiz.due}
+                onChange={e => setQuiz({...quiz, due: new Date(e.target.value).toISOString()})} />
             <div className="row mt-3">
               <div className="col-md-6">
                 <label htmlFor="availableFrom" className="form-label">
@@ -316,41 +167,26 @@ export default function DetailsEditor() {
                 </label>
                 <input
                   type="date"
-                  className="form-control"
+                  className="form-control border-secondary"
                   id="availableFrom"
-                  defaultValue={quiz.availableDate}
-                />
+                  defaultValue={quiz.availableFrom}
+                  onChange={e => setQuiz({...quiz, availableFrom: new Date(e.target.value).toISOString()})} />
               </div>
               <div className="col-md-6">
                 <label htmlFor="until" className="form-label">
                   Until
                 </label>
-                <input type="date" className="form-control" id="until" defaultValue={quiz.untilDate} />
+                <input type="date" className="form-control border-secondary" id="until" defaultValue={quiz.availableUntil}
+                  onChange={e => setQuiz({...quiz, availableUntil: new Date(e.target.value).toISOString()})} />
               </div>
             </div>
-
-
-            <button className="btn btn-light mt-3 w-100">+ Add</button>
           </div>
         </div>
       </div>
-
-      <hr className="mt-4 mb-3" />
-
-
-
-      <div className="d-flex justify-content-center">
-        <button type="button" className="btn btn-secondary me-3" onClick={handleCancelQuiz}>
-          Cancel
-        </button>
-        <button type="submit" className="btn btn-danger" onClick={handleSaveQuiz}>
-          Save
-        </button>
-      </div>
-
-      <hr className="mt-3" />
     </div>
-  );
+  ) : <div>
+    Quiz didn't load
+  </div>;
 }
 
 

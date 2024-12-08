@@ -1,58 +1,57 @@
-import React, { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; 
-import { FaTrash } from "react-icons/fa";
+import { QuizQuestion } from ".";
 
 type Answer = {
   text: string,
   caseSensitive: boolean
 };
 
-export interface FillInTheBlankQuestion {
-  question: string,
+export interface FillInTheBlankAnswer {
   answers: Answer[]
 }
 
-const FillInTheBlankEditor: React.FC = () => {
-  const [question, setQuestion] = useState<string>("");
-  const [answers, setAnswers] = useState<Answer[]>([]);
+function isAnswer(obj: any): obj is Answer {
+  return obj && typeof obj.text === 'string' && typeof obj.caseSensitive === 'boolean';
+}
 
+export function isFillInTheBlankAnswer(obj: any): obj is FillInTheBlankAnswer {
+  return (
+    obj &&
+    Array.isArray(obj.answers) &&
+    obj.answers.every(isAnswer)
+  );
+}
+
+const FillInTheBlankEditor = ({question, setQuestion} : {question: QuizQuestion, setQuestion : (question: QuizQuestion) => void}) => {
   const handleQuestionChange = (value: string): void => {
-    setQuestion(value); 
+    setQuestion({...question, question: value}); 
   };
 
+  const setAnswers = (answers: Answer[]) => {
+    setQuestion({...question, answer: {answers: answers}})
+  }
+
   const addAnswer = (): void => {
-    setAnswers([...answers, { text: "", caseSensitive: false }]);
+    if (isFillInTheBlankAnswer(question.answer)) {
+      setAnswers([...question.answer.answers, { text: "", caseSensitive: false }]);
+    } else {
+      setAnswers([{ text: "", caseSensitive: false}])
+    }
   };
 
   const removeAnswer = (index: number): void => {
-    setAnswers(answers.filter((_, i) => i !== index));
+    if (isFillInTheBlankAnswer(question.answer)) {
+      setAnswers(question.answer.answers.filter((_, i) => i !== index));
+    }
   };
 
   const handleAnswerTextChange = (index: number, value: string): void => {
-    const updatedAnswers = [...answers];
-    updatedAnswers[index].text = value;
-    setAnswers(updatedAnswers);
-  };
-
-  const handleSave = (): void => {
-    const trimmedAnswers = answers.map(a => ({...a, text: a.text.trim()})).filter(a => a.text !== "");
-    if (!question || trimmedAnswers.length === 0) {
-      alert("Please fill in all fields before saving.");
-      return;
+    if (isFillInTheBlankAnswer(question.answer)) {
+      const updatedAnswers = [...question.answer.answers];
+      updatedAnswers[index].text = value;
+      setAnswers(updatedAnswers);
     }
-
-    const questionData: FillInTheBlankQuestion = {
-      question,
-      answers: trimmedAnswers,
-    };
-    console.log("Saved Question:", questionData);
-    alert("Question saved successfully!");
-  };
-
-  const handleCancel = (): void => {
-    setQuestion("");
-    setAnswers([]);
   };
 
   return (
@@ -75,7 +74,7 @@ const FillInTheBlankEditor: React.FC = () => {
           </div>
         </div>
         <ReactQuill
-          value={question}
+          value={question.question}
           onChange={handleQuestionChange}
           style={{
             marginTop: "10px",
@@ -87,7 +86,7 @@ const FillInTheBlankEditor: React.FC = () => {
       </div>
       <div style={{ marginTop: "20px" }}>
         <h3>Answers:</h3>
-        {answers.map((answer, index) => (
+        {isFillInTheBlankAnswer(question.answer) && question.answer.answers.map((answer, index) => (
           <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
             <input
               type="text"
@@ -102,7 +101,7 @@ const FillInTheBlankEditor: React.FC = () => {
                 marginRight: "10px",
               }}
             />
-            {answers.length > 1 && (
+            {isFillInTheBlankAnswer(question.answer) && question.answer.answers.length > 1 && (
               <button
                 onClick={() => removeAnswer(index)}
                 style={{
@@ -130,35 +129,6 @@ const FillInTheBlankEditor: React.FC = () => {
           }}
         >
           + Add Another Answer
-        </button>
-      </div>
-      <div style={{ marginTop: "30px", textAlign: "left" }}>
-        <button
-          onClick={handleSave}
-          style={{
-            padding: "10px 15px",
-            marginRight: "10px",
-            backgroundColor: "#f44336", 
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Update Question
-        </button>
-        <button
-          onClick={handleCancel}
-          style={{
-            padding: "10px 15px",
-            backgroundColor: "#D3D3D3",
-            color: "black",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Cancel
         </button>
       </div>
     </div>

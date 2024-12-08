@@ -1,37 +1,21 @@
-import React, { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { QuizQuestion } from ".";
 
-export interface TrueFalseQuestion {
-  question: string,
+export interface TrueFalseAnswer {
   correctAnswer: boolean
 }
 
-const TrueFalseQuestionEditor: React.FC = () => {
-  const [question, setQuestion] = useState<string>("");
-  const [correctAnswer, setCorrectAnswer] = useState<boolean | null>(null);
+export function isTrueFalseAnswer(obj: any): obj is TrueFalseAnswer {
+  return (
+    obj &&
+    typeof obj.correctAnswer === 'boolean'
+  );
+}
 
+const TrueFalseQuestionEditor= ({question, setQuestion} : {question: QuizQuestion, setQuestion : (question: QuizQuestion) => void}) => {
   const handleQuestionChange = (value: string): void => {
-    setQuestion(value); 
-  };
-
-  const handleSave = (): void => {
-    if (!question || correctAnswer === null) {
-      alert("Please fill in the question and select the correct answer.");
-      return;
-    }
-
-    const questionData: TrueFalseQuestion = {
-      question,
-      correctAnswer,
-    };
-    console.log("Saved Question:", questionData);
-    alert("Question saved successfully!");
-  };
-
-  const handleCancel = (): void => {
-    setQuestion("");
-    setCorrectAnswer(null);
+    setQuestion({...question, question: value}); 
   };
 
   return (
@@ -54,7 +38,7 @@ const TrueFalseQuestionEditor: React.FC = () => {
           </div>
         </div>
         <ReactQuill
-          value={question}
+          value={question.question}
           onChange={handleQuestionChange}
           style={{
             marginTop: "10px",
@@ -67,60 +51,34 @@ const TrueFalseQuestionEditor: React.FC = () => {
       <div style={{ marginTop: "20px" }}>
         <h3>Answers:</h3>
         <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
-          <label style={{ marginRight: "10px", fontWeight: correctAnswer === true ? "bold" : "normal", color: correctAnswer === true ? "green" : "black" }}>
+          <label style={{ marginRight: "10px",
+              fontWeight: isTrueFalseAnswer(question.answer) && question.answer.correctAnswer === true ? "bold" : "normal",
+              color: isTrueFalseAnswer(question.answer) && question.answer.correctAnswer === true ? "green" : "black" }}>
             <input
               type="radio"
               name="correctAnswer"
               value="true"
-              checked={correctAnswer === true}
-              onChange={() => setCorrectAnswer(true)}
+              checked={isTrueFalseAnswer(question.answer) && question.answer.correctAnswer === true}
+              onChange={() => setQuestion({...question, answer: {correctAnswer: true}})}
               style={{ marginRight: "5px" }}
             />
             True
           </label>
         </div>
         <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
-          <label style={{ marginRight: "10px", fontWeight: correctAnswer === false ? "bold" : "normal", color: correctAnswer === false ? "green" : "black" }}>
+          <label style={{ marginRight: "10px", fontWeight: isTrueFalseAnswer(question.answer) && question.answer.correctAnswer === false ? "bold" : "normal",
+                  color: isTrueFalseAnswer(question.answer) && question.answer.correctAnswer === false ? "green" : "black" }}>
             <input
               type="radio"
               name="correctAnswer"
               value="false"
-              checked={correctAnswer === false}
-              onChange={() => setCorrectAnswer(false)}
+              checked={isTrueFalseAnswer(question.answer) && question.answer.correctAnswer === false}
+              onChange={() => setQuestion({...question, answer: {correctAnswer: false}})}
               style={{ marginRight: "5px" }}
             />
             False
           </label>
         </div>
-      </div>
-      <div style={{ marginTop: "30px", textAlign: "left" }}>
-        <button
-          onClick={handleSave}
-          style={{
-            padding: "10px 15px",
-            marginRight: "10px",
-            backgroundColor: "#f44336", 
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Update Question
-        </button>
-        <button
-          onClick={handleCancel}
-          style={{
-            padding: "10px 15px",
-            backgroundColor: "#D3D3D3", 
-            color: "black",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Cancel
-        </button>
       </div>
     </div>
   );

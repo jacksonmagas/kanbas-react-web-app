@@ -36,10 +36,10 @@ const quizzes = [
 
 export default function QuizPreview() {
     const navigate = useNavigate();
-    const { aid } = useParams();
+    const { qid } = useParams();
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-    const quiz = quizzes.find(q => q._id === aid);
+    const quiz = quizzes.find(q => q._id === qid);
 
     const handleNext = () => {
         if (quiz && currentQuestionIndex < (quiz.questions.length - 1)) {
@@ -113,7 +113,7 @@ export default function QuizPreview() {
             <br />
             <br />
             <button
-                onClick={() => navigate(`../Quizzes/${aid}/edit`)}
+                onClick={() => navigate(`../Quizzes/${qid}/edit`)}
                 className="btn btn-secondary w-100 d-flex align-items-center gap-2 p-2"
             >
                 <FaPencilAlt />
