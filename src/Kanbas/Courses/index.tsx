@@ -12,10 +12,26 @@ import Details from "./Quizzes/Details";
 import QuizPreview from "./Quizzes/QuizPreview";
 import ViewButton from "../ViewChangeButton";
 import { Course } from "..";
+import { useEffect, useState } from "react";
+import { User } from "../Account/reducer";
+import { findUsersForCourse } from "./client";
 
 export default function Courses({ courses }: { courses: Course[]; }) {
   const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
+  const [users, setUsers] = useState<User[]>([]);
+
+  const fetchUsers = async () => {
+    const users = cid ? await findUsersForCourse(cid) : null;
+    if (users) {
+      setUsers(users);
+    }
+  }
+
+  useEffect(() => {
+    fetchUsers()
+  }, []);
+  
   return (
     <div id="wd-courses">
       <div className="d-flex justify-content-between align-items-center" >
@@ -41,7 +57,7 @@ export default function Courses({ courses }: { courses: Course[]; }) {
             <Route path="Quizzes/:aid" element={<Details />} />
             <Route path="Quizzes/:aid/edit" element={<DetailsEditor />} />
             <Route path="Quizzes/:aid/preview" element={<QuizPreview />} />
-            <Route path="People" element={<PeopleTable />} />
+            <Route path="People" element={<PeopleTable users={users}/>} />
           </Routes>
         </div>
       </div>

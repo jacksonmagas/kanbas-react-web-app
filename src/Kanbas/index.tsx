@@ -4,7 +4,7 @@ import Dashboard from "./Dashboard";
 import KanbasNavigation from "./Navigation";
 import Courses from "./Courses";
 import "./styles.css";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import { ProtectedRoute } from "./Account/ProtectedRoute";
 import EnrollmentProtectedRoute from "./EnrollmentProtectedRoute";
 import Session from "./Account/Session";
@@ -48,7 +48,7 @@ export default function Kanbas() {
   const [courses, setCourses] = useState<Course[]>([]);
   const { currentUser } = useKanbasSelector(state => state.accountReducer);
   const [enrolling, setEnrolling] = useState<boolean>(false);
-  const findCoursesForUser = async () => {
+  const findCoursesForUser = useCallback(async () => {
     if (!currentUser) return;
     try {
       const courses = await userClient.findCoursesForUser(currentUser._id);
@@ -58,7 +58,7 @@ export default function Kanbas() {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [currentUser]);
   const updateEnrollment = async (courseId: string, enrolled: boolean) => {
     if (!currentUser) return;
     if (enrolled) {
@@ -78,7 +78,7 @@ export default function Kanbas() {
   };
 
 
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     if (!currentUser) return;
     try {
       const allCourses = await courseClient.fetchAllCourses();
@@ -98,7 +98,7 @@ export default function Kanbas() {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [currentUser]);
 
   useEffect(() => {
     if (enrolling) {
@@ -106,7 +106,7 @@ export default function Kanbas() {
     } else {
       findCoursesForUser();
     }
-  }, [currentUser, enrolling]);
+  }, [fetchCourses, findCoursesForUser, enrolling]);
 
   const [course, setCourse] = useState<Course>({
     _id: "0", name: "New Course", number: "new number",
