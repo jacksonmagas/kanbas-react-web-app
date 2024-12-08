@@ -6,7 +6,7 @@ const axiosWithCredentials = axios.create({ withCredentials: true });
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
 const COURSES_API = `${REMOTE_SERVER}/api/courses`;
 
-function exportCourse(c : Course) {
+function exportCourse(c: Course) {
   let temp = c;
   delete temp.enrolled;
   return temp;
@@ -21,29 +21,31 @@ export const fetchAllCourses = async () => {
 };
 
 export const createCourse = async (course: Course) => {
- const { data } = await axiosWithCredentials.post(`${COURSES_API}`, exportCourse(course));
- if (!isCourse(data)) {
-  return null;
- }
- return data;
+  const { data } = await axiosWithCredentials.post(`${COURSES_API}`, exportCourse(course));
+  if (!isCourse(data)) {
+    return null;
+  }
+  return data;
 };
 
 export const findQuizzesForCourse = async (courseId: string) => {
-  const response = await axios.get(`${COURSES_API}/${courseId}/Quizzes`);
+  const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/Quizzes`);
   return response.data;
 };
 
 export const createQuizForCourse = async (courseId: string, quiz: any) => {
-  const response = await axios.post(
-    `${COURSES_API}/${courseId}/Quizzes`,
-    quiz
-  );
+  const response = await axiosWithCredentials.post(`${COURSES_API}/${courseId}/Quizzes`, quiz);
+  return response.data;
+};
+
+export const updateQuizForCourse = async (quizId: string, quiz: any) => {
+  const response = await axiosWithCredentials.put(`${COURSES_API}/Quizzes/${quizId}`, quiz);
   return response.data;
 };
 
 export const fetchUnenrolledCourses = async (userId: string) => {
-    const { data } = await axiosWithCredentials.get(`${COURSES_API}/not/${userId}`);
-    return data;
+  const { data } = await axiosWithCredentials.get(`${COURSES_API}/not/${userId}`);
+  return data;
 }
 
 export const deleteCourse = async (id: string) => {
