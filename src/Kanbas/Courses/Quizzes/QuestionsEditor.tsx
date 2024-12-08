@@ -2,6 +2,7 @@ import { Quiz } from "./quizzesReducer";
 import { BsPlus } from "react-icons/bs";
 import { useState } from "react";
 import QuestionEditor, { QuestionType, QuizQuestion } from "./QuestionEditors";
+import { BiTrash } from "react-icons/bi";
 
 export default function QuestionsEditor({ quiz, setQuiz } : {quiz : Quiz, setQuiz : (quiz: Quiz) => void}) {
     const [editing, setEditing] = useState(false);
@@ -25,7 +26,7 @@ export default function QuestionsEditor({ quiz, setQuiz } : {quiz : Quiz, setQui
                 setQuestion={(new_q) => {
                     let newQuestions = quiz.questions.filter(q => q._id !== new_q._id)
                     newQuestions.push(new_q)
-                    setQuiz({...quiz, questions: newQuestions})
+                    setQuiz({...quiz, questions: newQuestions, points: quiz.points + new_q.pts})
                 }}/>
         </div>
     ) : (
@@ -45,6 +46,9 @@ export default function QuestionsEditor({ quiz, setQuiz } : {quiz : Quiz, setQui
                       <p className="mb-0">
                         {q.pts} pts
                       </p>
+                      <BiTrash className="fs-4 me-2 flex-end" onClick={() => {
+                        setQuiz({...quiz, questions: quiz.questions.filter(q2 => q._id !== q2._id), points: quiz.points - q.pts})
+                      }}/>
                     </div>
                   </div>
                 </li>

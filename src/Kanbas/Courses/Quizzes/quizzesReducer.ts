@@ -23,6 +23,7 @@ function isAssignmentGroup(obj: unknown): obj is AssignmentGroup {
     return Object.values(AssignmentGroup).includes(obj as AssignmentGroup);
 }
 
+
 export interface Quiz {
     _id: string,
     course: string,
@@ -100,7 +101,7 @@ const quizzesSlice = createSlice({
                 availableUntil: quiz.availableUntil,
                 questions: quiz.questions,
                 published: quiz.published,
-                points: quiz.questions.map(q => q.pts).reduce((l, r) => l + r)
+                points: quiz.questions.map(q => q.pts).reduce((l, r) => l + r, 0)
             };
             state.quizzes = [...state.quizzes, newQuiz];
         },

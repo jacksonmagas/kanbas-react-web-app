@@ -1,17 +1,12 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaPencilAlt } from "react-icons/fa";
-
-// Sample quiz data (you can replace this with your actual data source)
-const quizzes = [
-    { id: "123", title: "Q1 - HTML", type: "Graded Quiz", points: 29, status: "Closed", due: "Sep 21 at 1pm", shuffle: "Yes", timeLimit: "20 Minutes", attempts: "1", showAnswers: "After submission" },
-    { id: "124", title: "Q2 - CSS", type: "Graded Quiz", points: 32, status: "Closed", due: "Oct 5 at 1pm", shuffle: "No", timeLimit: "30 Minutes", attempts: "1", showAnswers: "After submission" },
-    // Add more quizzes as needed
-];
+import { useKanbasSelector } from "../../../hooks";
 
 export default function Details() {
     const navigate = useNavigate();
     const { qid } = useParams(); // Get the quiz ID from the URL
-    const quiz = quizzes.find(q => q.id === qid); // Find the quiz based on the ID
+    const { quizzes } = useKanbasSelector(s => s.quizzesReducer);
+    const quiz = quizzes.find(q => q._id === qid); // Find the quiz based on the ID
 
     if (!quiz) {
         return <div>Quiz not found</div>; // Handle case where quiz is not found
@@ -22,8 +17,7 @@ export default function Details() {
             <div className="d-flex justify-content-center gap-2 mb-2">
                 <button
                     className="btn btn-secondary btn-sm"
-                    onClick={() => navigate("preview")}
-                >
+                    onClick={() => navigate("preview")}>
                     Preview
                 </button>
                 <button

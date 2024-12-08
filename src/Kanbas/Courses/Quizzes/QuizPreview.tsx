@@ -5,33 +5,100 @@ import { FaPencilAlt } from "react-icons/fa";
 import { RxQuestionMarkCircled } from "react-icons/rx";
 
 import { useNavigate, useParams } from "react-router-dom";
+import { QuestionType, QuizQuestion } from './QuestionEditors';
+import { AssignmentGroup, QuizType } from './quizzesReducer';
+import { isMultipleChoiceAnswer } from './QuestionEditors/MultipleChoiceEditor';
+import { isTrueFalseAnswer } from './QuestionEditors/TrueFalseQuestionEditor';
 
 
-const quizzes = [
+
+export interface Quiz {
+    _id: string,
+    instructions: string,
+    title: string,
+    type: QuizType,
+    group: AssignmentGroup,
+    points: number,
+    status: string,
+    shuffleAnswers: boolean,
+    timeLimit: number,
+    attempts: string,
+    showAnswers: string,
+    questions: QuizQuestion[],
+    due: string,
+    availableFrom: string,
+    availableUntil: string,
+    publish: boolean,
+
+}
+const quizzes: Quiz[] = [
     {
         _id: "123",
+        instructions: "description",
         title: "Q1 - HTML",
-        type: "Graded Quiz",
-        points: 29,
-        status: "Closed",
-        due: "2023-09-21",
-        shuffle: "Yes",
-        timeLimit: "20 Minutes",
+        status: "closed",
+        points: 2,
+        type: QuizType.GRADED,
+        group: AssignmentGroup.QUIZZES,
+        shuffleAnswers: true,
+        timeLimit: 20,
         attempts: "1",
         showAnswers: "After submission",
         questions: [
             {
-                description: " An HTML label element can be associated with an HTML input element by setting their id attributes to the same value.",
-                options: ["True", "False"], answer: "True"
+                _id: "0",
+                title: "foo",
+                pts: 5,
+                type: QuestionType.TRUE_FALSE,
+                question: "is water wet",
+                answer: {
+                    correctAnswer: false
+                }
             },
             {
-                description: " jkl;;l;kjllj associated with an HTML input element by setting their id attributes to the same value.",
-                options: ["True", "False"], answer: "True"
+                _id: "1",
+                title: "whatever",
+                pts: 10,
+                type: QuestionType.MULTIPLE_CHOICE,
+                question: "what is 2+2",
+                answer: {
+                    answers: [
+                        {
+                            text: "3",
+                            correct: false
+                        },
+                        {
+                            text: "4",
+                            correct: true
+                        }
+                    ]
+                }
+            },
+            {
+                _id: "2",
+                title: "whatever",
+                pts: 10,
+                type: QuestionType.FILL_IN_THE_BLANK,
+                question: "what is 2+2",
+                answer: {
+                    answers: [
+                        {
+                            text: "3",
+                            caseSensitive: false
+                        },
+                        {
+                            text: "4",
+                            caseSensitive: true
+                        }
+                    ]
+                }
             }
-        ], publish: true
-    },
-    { _id: "124", title: "Q2 - CSS", type: "Graded Quiz", points: 32, status: "Closed", due: "2023-10-05", shuffle: "No", timeLimit: "30 Minutes", attempts: "1", showAnswers: "After submission", publish: false, questions: [] },
-
+        ],
+        due: "232",
+        availableFrom: "232",
+        availableUntil: "232",
+        publish: true,
+    }
 ];
 
 export default function QuizPreview() {
@@ -66,31 +133,56 @@ export default function QuizPreview() {
             <div className="card ms-5 me-5">
                 <div className="card-header d-flex justify-content-between align-items-center">
                     <span><b>Question {currentQuestionIndex + 1}</b></span>
-                    <span>1pts</span>
+                    <span>{quiz?.questions[currentQuestionIndex]?.pts}pts</span>
                 </div>
                 <div className="card-body">
                     {quiz ? (
                         <>
                             <p className="card-text">
-                                {quiz.questions[currentQuestionIndex]?.description} </p>
+                                {quiz.questions[currentQuestionIndex]?.question}
+                            </p>
+                            <hr />
+                            <div>
+                                {quiz.questions[currentQuestionIndex]?.type === QuestionType.TRUE_FALSE && (
+                                    <div>
+                                        <label>
+                                            <input type="radio" name="answer" value="True" />
+                                            True
+                                        </label>
+                                        <hr />
+                                        <label>
+                                            <input type="radio" name="answer" value="False" />
+                                            False
+                                        </label>
+                                    </div>
+                                )}
+                                {quiz.questions[currentQuestionIndex]?.type === QuestionType.MULTIPLE_CHOICE
+                                && isMultipleChoiceAnswer(quiz.questions[currentQuestionIndex].answer)
+                                && (<div>
+                                        {quiz.questions[currentQuestionIndex]?.answer.answers.map((answer, index) => (
+                                            <div key={index}>
+                                                <label>
+                                                    <input type="radio" name="answer" value={answer.text} />
+                                                    {answer.text}
+                                                </label>
+                                                <hr />
+                                            </div>
+                                        ))}
+                                    </div>)}
+                                {quiz.questions[currentQuestionIndex]?.type === QuestionType.TRUE_FALSE
+                                && isTrueFalseAnswer(quiz.questions[currentQuestionIndex].answer)
+                                && (<div>
+                                        <label>
+                                            <input type="text" name="answer" placeholder="" />
+                                        </label>
+                                    </div>
+                                    )}
+                            </div>
+
                         </>
                     ) : (
                         <p className="card-text">Quiz not found.</p>
                     )}
-                    <hr />
-                    <div>
-                        <label>
-                            <input type="radio" name="answer" value="True" />
-                            True
-                        </label>
-                        <hr />
-                        <label>
-                            <input type="radio" name="answer" value="False" />
-                            False
-                        </label>
-                    </div>
-                    <hr />
-
                 </div>
             </div>
             <br />
