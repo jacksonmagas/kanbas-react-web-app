@@ -4,29 +4,25 @@ import "react-quill/dist/quill.snow.css";
 import { FaTrash } from "react-icons/fa";
 
 type Answer = {
-  text: string;
+  text: string,
+  caseSensitive: boolean
 };
 
+export interface FillInTheBlankQuestion {
+  question: string,
+  answers: Answer[]
+}
+
 const FillInTheBlankEditor: React.FC = () => {
-  const [title, setTitle] = useState<string>("");
-  const [points, setPoints] = useState<number>(0);
   const [question, setQuestion] = useState<string>("");
-  const [answers, setAnswers] = useState<Answer[]>([{ text: "" }]);
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setTitle(e.target.value);
-  };
-
-  const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setPoints(Number(e.target.value));
-  };
+  const [answers, setAnswers] = useState<Answer[]>([]);
 
   const handleQuestionChange = (value: string): void => {
     setQuestion(value); 
   };
 
   const addAnswer = (): void => {
-    setAnswers([...answers, { text: "" }]);
+    setAnswers([...answers, { text: "", caseSensitive: false }]);
   };
 
   const removeAnswer = (index: number): void => {
@@ -40,27 +36,23 @@ const FillInTheBlankEditor: React.FC = () => {
   };
 
   const handleSave = (): void => {
-    const trimmedAnswers = answers.map((a) => a.text.trim()).filter((a) => a !== "");
-    if (!title || !question || trimmedAnswers.length === 0) {
+    const trimmedAnswers = answers.map(a => ({...a, text: a.text.trim()})).filter(a => a.text !== "");
+    if (!question || trimmedAnswers.length === 0) {
       alert("Please fill in all fields before saving.");
       return;
     }
 
-    const questionData = {
-      title,
-      points,
+    const questionData: FillInTheBlankQuestion = {
       question,
-      possibleAnswers: trimmedAnswers,
+      answers: trimmedAnswers,
     };
     console.log("Saved Question:", questionData);
     alert("Question saved successfully!");
   };
 
   const handleCancel = (): void => {
-    setTitle("");
-    setPoints(0);
     setQuestion("");
-    setAnswers([{ text: "" }]);
+    setAnswers([]);
   };
 
   return (

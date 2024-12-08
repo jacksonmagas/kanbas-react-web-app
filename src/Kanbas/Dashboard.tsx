@@ -79,31 +79,29 @@ export default function Dashboard(
                         {course.description} </p>
                       <button className="btn btn-primary float-begin"> Go </button>
                       <RoleView role="FACULTY">
-                        <button onClick={(event) => {
+                        {!enrolling && <button onClick={(event) => {
                             event.preventDefault();
                             deleteCourse(course._id);
                           }} className="btn btn-danger float-end"
                           id="wd-delete-course-click">
                           Delete
-                        </button>
-                        <button id="wd-edit-course-click"
+                        </button>}
+                        {!enrolling && <button id="wd-edit-course-click"
                           onClick={(event) => {
                             event.preventDefault();
                             setCourse(course);
                           }}
                           className="btn btn-warning me-2 float-end" >
                           Edit
-                        </button>
-                      </RoleView>
-                      <RoleView role="STUDENT" loose>
-                        {enrolling && <button id="wd-enrollment-course-click"
-                          onClick={(event) => {
-                            event.preventDefault();
-                            updateEnrollment(course._id, !course.enrolled)}}
-                          className={`btn ${course.enrolled ? "btn-danger" : "btn-success"} me-2 float-end`} >
-                          {course.enrolled ? "Unenroll" : "Enroll"}
                         </button>}
                       </RoleView>
+                      {enrolling && <button id="wd-enrollment-course-click"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          updateEnrollment(course._id, !course.enrolled)}}
+                        className={`btn ${course.enrolled ? "btn-danger" : "btn-success"} me-2 float-end`} >
+                        {course.enrolled ? "Unenroll" : "Enroll"}
+                      </button>}
                     </div>
                   </Link>
                 </div>

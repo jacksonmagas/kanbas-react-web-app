@@ -1,18 +1,32 @@
 import React, { useState } from "react";
-import TrueFalseQuestionEditor from "./TrueFalseQuestionEditor";
-import MultipleChoiceEditor from "./MultipleChoiceEditor";
-import FillInTheBlankEditor from "./FillInTheBlankEditor";
+import TrueFalseQuestionEditor, { TrueFalseQuestion } from "./TrueFalseQuestionEditor";
+import MultipleChoiceEditor, { MultipleChoiceQuestion } from "./MultipleChoiceEditor";
+import FillInTheBlankEditor, { FillInTheBlankQuestion } from "./FillInTheBlankEditor";
+
+export enum QuestionType {
+  // other parts of the code rely on this being int based
+  TRUE_FALSE = 0,
+  MULTIPLE_CHOICE = 1,
+  FILL_IN_THE_BLANK = 2
+}
+
+export interface QuizQuestion {
+  title: string,
+  pts: number,
+  type: QuestionType,
+  question: TrueFalseQuestion | MultipleChoiceQuestion | FillInTheBlankQuestion
+}
 
 const QuestionEditor: React.FC = () => {
-  const [questionType, setQuestionType] = useState<string>("True/False");
+  const [questionType, setQuestionType] = useState(QuestionType.TRUE_FALSE);
 
   const renderEditor = (): JSX.Element => {
     switch (questionType) {
-      case "True/False":
+      case QuestionType.TRUE_FALSE:
         return <TrueFalseQuestionEditor />;
-      case "Multiple Choice":
+      case QuestionType.MULTIPLE_CHOICE:
         return <MultipleChoiceEditor />;
-      case "Fill in the blank":
+      case QuestionType.FILL_IN_THE_BLANK:
         return <FillInTheBlankEditor />;
       default:
         return <div>Please select a question type.</div>;
@@ -43,7 +57,7 @@ const QuestionEditor: React.FC = () => {
         <select
           className="select-control"
           value={questionType}
-          onChange={(e) => setQuestionType(e.target.value)}
+          onChange={(e) => setQuestionType(parseInt(e.target.value))}
           style={{
             padding: "10px",
             border: "1px solid #ccc",
@@ -51,9 +65,9 @@ const QuestionEditor: React.FC = () => {
             flexShrink: 0,
           }}
         >
-          <option>True/False</option>
-          <option>Multiple Choice</option>
-          <option>Fill in the blank</option>
+          <option value={QuestionType.TRUE_FALSE}>True/False</option>
+          <option value={QuestionType.MULTIPLE_CHOICE}>Multiple Choice</option>
+          <option value={QuestionType.FILL_IN_THE_BLANK}>Fill in the blank</option>
         </select>
         <span
           className="fw-bold"

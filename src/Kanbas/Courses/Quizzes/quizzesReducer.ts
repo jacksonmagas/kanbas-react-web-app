@@ -1,5 +1,31 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { QuizQuestion } from "./QuestionEditors";
 
+enum QuizType {
+    GRADED,
+    UNGRADED
+}
+
+enum AssignmentGroup {
+    ASSIGNMENTS,
+    QUIZZES,
+    EXAMS
+}
+
+export interface Quiz {
+    _id: string,
+    instructions: string,
+    type: QuizType,
+    group: AssignmentGroup,
+    shuffleAnswers: boolean,
+    timeLimit: number,
+    multipleAttempts: boolean,
+    assignTo: string,
+    due: string,
+    availableFrom: string,
+    availableUntil: string,
+    questions: QuizQuestion
+}
 
 const initialState = {
     quizzes: [],

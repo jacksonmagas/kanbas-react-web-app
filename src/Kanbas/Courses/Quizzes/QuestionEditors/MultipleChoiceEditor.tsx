@@ -7,6 +7,11 @@ type Answer = {
   correct: boolean;
 };
 
+export interface MultipleChoiceQuestion {
+  question: string,
+  answers: Answer[]
+}
+
 const MultipleChoiceEditor: React.FC = () => {
   const [title, setTitle] = useState<string>("");
   const [points, setPoints] = useState<number>(0);
@@ -14,14 +19,6 @@ const MultipleChoiceEditor: React.FC = () => {
   const [answers, setAnswers] = useState<Answer[]>([
     { text: "", correct: false },
   ]);
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setTitle(e.target.value);
-  };
-
-  const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setPoints(Number(e.target.value));
-  };
 
   const handleQuestionChange = (value: string): void => {
     setQuestion(value);
@@ -53,16 +50,14 @@ const MultipleChoiceEditor: React.FC = () => {
     const trimmedAnswers = answers
       .map((a) => ({ ...a, text: a.text.trim() }))
       .filter((a) => a.text !== "");
-    if (!title || !question || trimmedAnswers.length === 0) {
+    if (!question || trimmedAnswers.length === 0) {
       alert("Please fill in all fields before saving.");
       return;
     }
 
-    const questionData = {
-      title,
-      points,
+    const questionData: MultipleChoiceQuestion = {
       question,
-      possibleAnswers: trimmedAnswers,
+      answers: trimmedAnswers,
     };
     console.log("Saved Question:", questionData);
     alert("Question saved successfully!");

@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
+export interface TrueFalseQuestion {
+  question: string,
+  correctAnswer: boolean
+}
+
 const TrueFalseQuestionEditor: React.FC = () => {
   const [question, setQuestion] = useState<string>("");
   const [correctAnswer, setCorrectAnswer] = useState<boolean | null>(null);
@@ -16,7 +21,7 @@ const TrueFalseQuestionEditor: React.FC = () => {
       return;
     }
 
-    const questionData = {
+    const questionData: TrueFalseQuestion = {
       question,
       correctAnswer,
     };
