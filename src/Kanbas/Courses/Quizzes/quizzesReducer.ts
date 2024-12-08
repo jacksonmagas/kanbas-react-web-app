@@ -1,16 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { QuizQuestion } from "./QuestionEditors";
 
-enum QuizType {
+export enum QuizType {
     GRADED,
     UNGRADED
 }
 
-enum AssignmentGroup {
+export enum AssignmentGroup {
     ASSIGNMENTS,
     QUIZZES,
     EXAMS
 }
+
 
 export interface Quiz {
     _id: string,
@@ -24,7 +25,7 @@ export interface Quiz {
     due: string,
     availableFrom: string,
     availableUntil: string,
-    questions: QuizQuestion
+    questions: QuizQuestion[]
 }
 
 const initialState = {

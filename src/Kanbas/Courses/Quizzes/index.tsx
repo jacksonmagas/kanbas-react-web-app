@@ -7,7 +7,6 @@ import { IoEllipsisVertical } from "react-icons/io5";
 import QuizIcon from "./QuizIcon";
 import { MdUnpublished } from "react-icons/md";
 import { IoCheckmarkCircle } from "react-icons/io5";
-import QuestionsEditor from "./QuestionsEditor";
 import { RoleView } from "../../Account/RoleShownContent";
 import QuestionEditor from "./QuestionEditors";
 import { useState } from "react";
@@ -42,13 +41,13 @@ export default function Quizzes() {
           <input id="wd-search-assignment"
             className="form-control me-5 border-secondary"
             placeholder="Search for Quiz" />
-            <Link className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
-              to={`/Kanbas/Courses/${cid}/Quizzes/new-quiz/edit`}>
-              <button id="wd-add-quizzes" className="btn btn-danger d-flex flex-end me-2">
-                <BsPlus className="fs-4" />
-                Quiz
-              </button>
-            </Link>
+          <Link className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
+            to={`/Kanbas/Courses/${cid}/Quizzes/new-quiz/edit`}>
+            <button id="wd-add-quizzes" className="btn btn-danger d-flex flex-end me-2">
+              <BsPlus className="fs-4" />
+              Quiz
+            </button>
+          </Link>
           <div className="dropdown d-flex me-1">
             <button id="wd-add-quizzes-group" className="btn btn-secondary" type="button" data-bs-toggle="dropdown">
               <IoEllipsisVertical className="fs-4" />
@@ -107,8 +106,7 @@ export default function Quizzes() {
           </li>
         </ul>
       </div>
-      <QuestionEditor />
-
+      {/* <QuestionEditor /> */}
     </div>
 
   );
