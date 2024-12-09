@@ -1,30 +1,46 @@
 import { BsGripVertical, BsPlus } from "react-icons/bs";
 import { TiArrowSortedDown } from "react-icons/ti";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { IoEllipsisVertical } from "react-icons/io5";
 import QuizIcon from "./QuizIcon";
 import { MdUnpublished } from "react-icons/md";
-import { IoCheckmarkCircle } from "react-icons/io5";
-import { RoleView } from "../../Account/RoleShownContent";
-import QuestionEditor from "./QuestionEditors";
-import { useState } from "react";
 import GreenCheckmark from "../Modules/GreenCheckmark";
-import QuizEditor from "./QuizEditor";
 import { useKanbasDispatch, useKanbasSelector } from "../../../hooks";
-import { updateQuiz } from "./quizzesReducer";
-// import AssignmentControlButtons from "./AssignmentControlButtons";
+import { setQuizzes, updateQuiz } from "./quizzesReducer";
+import * as coursesClient from "../client"
+import * as quizClient from "./client"
+import { useEffect } from "react";
 
 export default function Quizzes() {
   const { cid } = useParams();
   const { quizzes } = useKanbasSelector(state => state.quizzesReducer); 
   const dispatch = useKanbasDispatch();
+  const navigate = useNavigate();
 
-  const togglePublish = (id: string) => {
-    const quiz = quizzes.find(q => q._id === id);
+  const fetchQuizzes = async () => {
+    if (!cid) return;
+    const quizzes = await coursesClient.findQuizzesForCourse(cid);
+    if (quizzes) {
+      dispatch(setQuizzes(quizzes));
+    }
+  }
+
+  const togglePublish = async (id: string) => {
+    let quiz = quizzes.find(q => q._id === id);
     if (quiz) {
-      dispatch(updateQuiz({...quiz, published: !quiz.published}));
+      quiz = {...quiz, published: !quiz.published};
+      await quizClient.updateQuiz(quiz);
+      dispatch(updateQuiz(quiz));
     }
   };
+
+  const deleteQuiz = async (id: string) => {
+    await quizClient.deleteQuiz(id)
+  }
+
+  useEffect(() => {
+    fetchQuizzes();
+  }, []);
 
   return (
     <div>
@@ -86,9 +102,9 @@ export default function Quizzes() {
                           <IoEllipsisVertical className="fs-4" />
                         </button>
                         <form className="dropdown-menu p-4">
-                          <button className="btn btn-primary mb-3">Edit</button>
-                          <button className="btn btn-primary mb-3">Delete</button>
-                          <button className="btn btn-primary mb-3">Publish</button>
+                          <button className="btn btn-primary mb-3" onClick={() => navigate(`${quiz._id}/edit`)}>Edit</button>
+                          <button className="btn btn-primary mb-3" onClick={() => deleteQuiz(quiz._id)}>Delete</button>
+                          <button className="btn btn-primary mb-3" onClick={() => togglePublish(quiz._id)}>Publish</button>
                         </form>
                       </div>
                     </div>

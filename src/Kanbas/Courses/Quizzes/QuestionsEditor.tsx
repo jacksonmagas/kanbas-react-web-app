@@ -26,6 +26,7 @@ export default function QuestionsEditor({ quiz, setQuiz } : {quiz : Quiz, setQui
                 setQuestion={(new_q) => {
                     let newQuestions = quiz.questions.filter(q => q._id !== new_q._id)
                     newQuestions.push(new_q)
+                    console.log(newQuestions)
                     setQuiz({...quiz, questions: newQuestions, points: quiz.points + new_q.pts})
                 }}/>
         </div>

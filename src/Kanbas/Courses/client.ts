@@ -3,6 +3,7 @@ import { Course, isCourse } from "..";
 import { Module, isModule } from "./Modules/reducer";
 import { Assignment, isAssignment } from "./Assignments/reducer";
 import { isUser } from "../Account/reducer";
+import { isQuiz, Quiz } from "./Quizzes/quizzesReducer";
 const axiosWithCredentials = axios.create({ withCredentials: true });
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
 const COURSES_API = `${REMOTE_SERVER}/api/courses`;
@@ -30,17 +31,20 @@ export const createCourse = async (course: Course) => {
 };
 
 export const findQuizzesForCourse = async (courseId: string) => {
-  const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/Quizzes`);
-  return response.data;
+  const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/quizzes`);
+  if (!Array.isArray(response.data)) {
+    console.log(response.data);
+    return null;
+  }
+  return response.data.filter(isQuiz);
 };
 
-export const createQuizForCourse = async (courseId: string, quiz: any) => {
-  const response = await axiosWithCredentials.post(`${COURSES_API}/${courseId}/Quizzes`, quiz);
-  return response.data;
-};
-
-export const updateQuizForCourse = async (quizId: string, quiz: any) => {
-  const response = await axiosWithCredentials.put(`${COURSES_API}/Quizzes/${quizId}`, quiz);
+export const createQuizForCourse = async (courseId: string, quiz: Quiz) => {
+  const response = await axiosWithCredentials.post(`${COURSES_API}/${courseId}/quizzes`, quiz);
+  if (!isQuiz(response.data)) {
+    console.log(response.data);
+    return null;
+  }
   return response.data;
 };
 

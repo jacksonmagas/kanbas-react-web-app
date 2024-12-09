@@ -158,7 +158,7 @@ export default function DetailsEditor({quiz, setQuiz } : {quiz: Quiz, setQuiz : 
             <label htmlFor="dueDate" className="form-label">
               Due
             </label>
-            <input type="date" className="form-control mb-2 border-secondary" id="dueDate" defaultValue={quiz.due}
+            <input type="date" className="form-control mb-2 border-secondary" id="dueDate" defaultValue={quiz.due.substring(0, 10)}
                 onChange={e => setQuiz({...quiz, due: new Date(e.target.value).toISOString()})} />
             <div className="row mt-3">
               <div className="col-md-6">
@@ -169,14 +169,14 @@ export default function DetailsEditor({quiz, setQuiz } : {quiz: Quiz, setQuiz : 
                   type="date"
                   className="form-control border-secondary"
                   id="availableFrom"
-                  defaultValue={quiz.availableFrom}
+                  defaultValue={quiz.availableFrom.substring(0, 10)}
                   onChange={e => setQuiz({...quiz, availableFrom: new Date(e.target.value).toISOString()})} />
               </div>
               <div className="col-md-6">
                 <label htmlFor="until" className="form-label">
                   Until
                 </label>
-                <input type="date" className="form-control border-secondary" id="until" defaultValue={quiz.availableUntil}
+                <input type="date" className="form-control border-secondary" id="until" defaultValue={quiz.availableUntil.substring(0, 10)}
                   onChange={e => setQuiz({...quiz, availableUntil: new Date(e.target.value).toISOString()})} />
               </div>
             </div>

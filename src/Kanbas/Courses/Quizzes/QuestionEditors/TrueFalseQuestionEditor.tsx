@@ -7,10 +7,11 @@ export interface TrueFalseAnswer {
 }
 
 export function isTrueFalseAnswer(obj: any): obj is TrueFalseAnswer {
-  return (
-    obj &&
-    typeof obj.correctAnswer === 'boolean'
-  );
+  if (!(obj && typeof obj.correctAnswer === 'boolean')) {
+    console.log(`malformed truefalse answer ${JSON.stringify(obj)}`)
+    return false
+  }
+  return true
 }
 
 const TrueFalseQuestionEditor= ({question, setQuestion} : {question: QuizQuestion, setQuestion : (question: QuizQuestion) => void}) => {

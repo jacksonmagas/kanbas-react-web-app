@@ -47,24 +47,68 @@ export function isQuiz(obj: unknown): obj is Quiz {
     if (typeof obj !== 'object' || obj === null) {
         return false;
     }
-
     const quiz = obj as Quiz;
-
-    return typeof quiz._id === 'string' &&
-        typeof quiz.course === 'string' &&
-        typeof quiz.title === 'string' &&
-        typeof quiz.description === 'string' &&
-        isQuizType(quiz.type) &&
-        isAssignmentGroup(quiz.group) &&
-        typeof quiz.shuffleAnswers === 'boolean' &&
-        typeof quiz.timeLimit === 'number' &&
-        typeof quiz.attempts === 'number' &&
-        typeof quiz.assignTo === 'string' &&
-        typeof quiz.due === 'string' &&
-        typeof quiz.availableFrom === 'string' &&
-        typeof quiz.availableUntil === 'string' &&
-        Array.isArray(quiz.questions) && quiz.questions.every(isQuizQuestion) &&
-        typeof quiz.published === 'boolean';
+    if (typeof quiz._id !== 'string') {
+        console.log(`id ${quiz._id} not string`)
+        return false;
+    }
+    if (typeof quiz.course !== 'string') {
+        console.log(`course ${quiz.course} not string`)
+        return false;
+    }
+    if (typeof quiz.title !== 'string') {
+        console.log(`title ${quiz.title} not string`)
+        return false;
+    }
+    if (typeof quiz.description !== 'string') {
+        console.log(`description ${quiz.description} not string`)
+        return false;
+    }
+    if (!isQuizType(quiz.type)) {
+        console.log(`type ${quiz.type} not quiz type`)
+        return false;
+    }
+    if (!isAssignmentGroup(quiz.group)) {
+        console.log(`group ${quiz.group} not assignment group`)
+        return false;
+    }
+    if (typeof quiz.shuffleAnswers !== 'boolean') {
+        console.log(`shuffle answers ${quiz.shuffleAnswers} not boolean`)
+        return false;
+    }
+    if (typeof quiz.timeLimit !== 'number') {
+        console.log(`time limit ${quiz.timeLimit} not number`)
+        return false;
+    }
+    if (typeof quiz.attempts !== 'number') {
+        console.log(`attempts ${quiz.attempts} not number`)
+        return false;
+    }
+    if (typeof quiz.assignTo !== 'string') {
+        console.log(`assignt to ${quiz.assignTo} not string`)
+        return false;
+    }
+    if (typeof quiz.due !== 'string') {
+        console.log(`due ${quiz.due} not string`)
+        return false;
+    }
+    if (typeof quiz.availableFrom !== 'string') {
+        console.log(`available from ${quiz.availableFrom} not string`)
+        return false;
+    }
+    if (typeof quiz.availableUntil !== 'string') {
+        console.log(`available until ${quiz.availableFrom} not string`)
+        return false;
+    }
+    if (!Array.isArray(quiz.questions) || !quiz.questions.every(isQuizQuestion)) {
+        console.log(`questions ${quiz.questions} not questions`)
+        return false;
+    }
+    if (typeof quiz.published !== 'boolean') {
+        console.log(`published ${quiz.published} not boolean`)
+        return false;
+    }
+    return true;
 }
 
 interface QuizState {
@@ -85,25 +129,8 @@ const quizzesSlice = createSlice({
 
         addQuiz: (state, action : PayloadAction<Quiz>) => {
             const quiz = action.payload;
-            const newQuiz: Quiz = {
-                _id: new Date().getTime().toString(),
-                course: quiz.course,
-                title: quiz.title,
-                description: quiz.description,
-                type: quiz.type,
-                group: quiz.group,
-                shuffleAnswers: quiz.shuffleAnswers,
-                timeLimit: quiz.timeLimit,
-                attempts: quiz.attempts,
-                assignTo: quiz.assignTo,
-                due: quiz.due,
-                availableFrom: quiz.availableFrom,
-                availableUntil: quiz.availableUntil,
-                questions: quiz.questions,
-                published: quiz.published,
-                points: quiz.questions.map(q => q.pts).reduce((l, r) => l + r, 0)
-            };
-            state.quizzes = [...state.quizzes, newQuiz];
+            state.quizzes = [...state.quizzes, quiz];
+            console.log(state.quizzes);
         },
         deleteQuiz: (state, action: PayloadAction<string>) => {
             const quizId = action.payload;

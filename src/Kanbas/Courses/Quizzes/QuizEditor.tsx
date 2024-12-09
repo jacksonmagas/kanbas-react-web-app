@@ -3,14 +3,17 @@ import { useDispatch } from "react-redux";
 import { useParams, useLocation, useNavigate } from "react-router";
 import DetailsEditor from "./DetailsEditor";
 import { addQuiz, AssignmentGroup, isQuiz, Quiz, QuizType, updateQuiz } from "./quizzesReducer";
-import * as coursesClient from "../client"
 import QuestionsEditor from "./QuestionsEditor";
+import { useKanbasSelector } from "../../../hooks";
+import * as coursesClient from "../client"
+import * as quizClient from "./client"
 
 // This is the screen that has the tabs and renders details editor or questions editor
 export default function QuizEditor() {
   const { qid, cid } = useParams(); // quiz ID 
   const { pathname } = useLocation();
   const [quiz, setQuiz] = useState<Quiz | null>(null); // State
+  const { quizzes } = useKanbasSelector(s => s.quizzesReducer);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -23,15 +26,17 @@ export default function QuizEditor() {
     }
   }
 
-  const handleSaveQuiz = () => {
-    if (!quiz) return;
+  const handleSaveQuiz = async () => {
+    if (!quiz || !cid) return;
     if (pathname.includes('new-quiz')) {
-        // TODO add api call
-        //createQuiz
-        dispatch(addQuiz(quiz));
+        console.log(`Creating: ${JSON.stringify(quiz)}`)
+        const newQuiz = await coursesClient.createQuizForCourse(cid, quiz);
+        if (newQuiz) {
+          dispatch(addQuiz(newQuiz));
+        }
     } else {
-        //updateQuiz
-        // TODO add api call
+        console.log(`Updating: ${JSON.stringify(quiz)}`)
+        await quizClient.updateQuiz(quiz);
         dispatch(updateQuiz(quiz));
     }
     navigate(`/Kanbas/Courses/${cid}/Quizzes`);
@@ -60,9 +65,10 @@ export default function QuizEditor() {
         points: 0
       });
     } else {
-        const fetchedQuiz = null;
-        // TODO add api call for quizzes
-        setQuiz(fetchedQuiz);
+        const fetchedQuiz = quizzes.find(q => q._id === qid);
+        if (fetchedQuiz) {
+          setQuiz(fetchedQuiz);
+        }
     }
   }, [pathname]);
 
