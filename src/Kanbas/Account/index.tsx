@@ -31,8 +31,10 @@ export default function Account() {
           </tr>
         </tbody>
       </table>
-      <div className="float-bottom">
+      <div className="fixed-bottom text-center">
         Jackson Magas, Christian Feliciano, Trisha Garg
+        <br/>
+        All in section 01
         <br/>
         Github links in Labs navigation
       </div>
