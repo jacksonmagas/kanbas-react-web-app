@@ -115,7 +115,7 @@ export default function Quizzes() {
                   <div className="float-end">
                     <RoleView role="FACULTY">
                       <div className="d-flex">
-                        <button className="btn"
+                        <button className="btn d-flex align-content-center"
                           onClick={() => togglePublish(quiz._id)}>
                           {quiz.published === false 
                             ? <MdUnpublished className="text-danger fs-4" />
