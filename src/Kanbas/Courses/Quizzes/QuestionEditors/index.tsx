@@ -10,7 +10,6 @@ export enum QuestionType {
   FILL_IN_THE_BLANK = 2
 }
 
-
 export interface QuizQuestion {
   _id: string,
   title: string,

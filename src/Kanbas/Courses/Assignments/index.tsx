@@ -70,7 +70,7 @@ export default function Assignments() {
   return (
     <div id="wd-assignments" className="ms-1">
       <div className="d-flex mb-1 align-items-center">
-        <FaMagnifyingGlass className="position-fixed fs-4 ms-2"/>
+        <FaMagnifyingGlass className="position-absolute fs-4 ms-2"/>
         <input id="wd-search-assignment"
               className="form-control me-5 px-5 border-secondary"
               placeholder="Search..." />

@@ -20,7 +20,7 @@ export const findFilteredUsers = async ({role, name} : {role?: string, name?: st
   const nameStr = name ? `name=${name}` : "";
   const connector = name && role ? "&" : "";
   const response = await
-    axios.get(`${USERS_API}${query}${roleStr}${connector}${nameStr}`);
+    axiosWithCredentials.get(`${USERS_API}${query}${roleStr}${connector}${nameStr}`);
   if (!Array.isArray(response.data)) {
     return null;
   }
@@ -28,7 +28,7 @@ export const findFilteredUsers = async ({role, name} : {role?: string, name?: st
 };
 
 export const findUserById = async (id: string) => {
-  const response = await axios.get(`${USERS_API}/${id}`);
+  const response = await axiosWithCredentials.get(`${USERS_API}/${id}`);
   if (!isUser(response.data)) {
     return null;
   }

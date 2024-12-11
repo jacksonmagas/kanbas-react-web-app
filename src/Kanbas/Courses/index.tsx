@@ -17,6 +17,7 @@ import { findUsersForCourse } from "./client";
 import QuizEditor from "./Quizzes/QuizEditor";
 import QuestionEditor from "./Quizzes/QuestionEditors";
 import QuizTake from "./Quizzes/QuizTake";
+import { useKanbasSelector } from "../../hooks";
 
 export default function Courses({ courses }: { courses: Course[]; }) {
   const { cid } = useParams();
