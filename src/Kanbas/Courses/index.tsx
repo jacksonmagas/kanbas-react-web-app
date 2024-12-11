@@ -16,6 +16,7 @@ import { User } from "../Account/reducer";
 import { findUsersForCourse } from "./client";
 import QuizEditor from "./Quizzes/QuizEditor";
 import QuestionEditor from "./Quizzes/QuestionEditors";
+import { useKanbasSelector } from "../../hooks";
 
 export default function Courses({ courses }: { courses: Course[]; }) {
   const { cid } = useParams();
@@ -40,7 +41,7 @@ export default function Courses({ courses }: { courses: Course[]; }) {
         <FaAlignJustify className="me-4 fs-4 mb-1" />
         {course && course.name}
       </h2>
-        <ViewButton className="flex-end"/>
+      <ViewButton className="flex-end"/>
       </div>
       <hr />
       <div className="d-flex">

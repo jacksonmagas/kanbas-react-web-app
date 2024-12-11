@@ -30,8 +30,21 @@ export const createCourse = async (course: Course) => {
   return data;
 };
 
-export const findQuizzesForCourse = async (courseId: string) => {
-  const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/quizzes`);
+export const findQuizzesForCourse = async ({courseId, search, published} : {courseId: string, search?: string, published?: boolean}) => {
+  const query = search || published ? "?" : "";
+  const titleStr = search ? `title=${search}` : "";
+  const publishedStr = published ? `published=${published}` : "";
+  const connector = search && published ? "&" : "";
+  const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/quizzes${query}${titleStr}${connector}${publishedStr}`);
+  if (!Array.isArray(response.data)) {
+    console.log(response.data);
+    return null;
+  }
+  return response.data.filter(isQuiz);
+};
+
+export const findPublishedQuizzesForCourse = async (courseId: string) => {
+  const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/quizzes/published`);
   if (!Array.isArray(response.data)) {
     console.log(response.data);
     return null;
