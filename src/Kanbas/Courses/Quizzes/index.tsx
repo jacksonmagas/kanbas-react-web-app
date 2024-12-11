@@ -15,16 +15,16 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 
 export default function Quizzes() {
   const { cid } = useParams();
-  const { quizzes } = useKanbasSelector(state => state.quizzesReducer); 
+  const { quizzes } = useKanbasSelector(state => state.quizzesReducer);
   const { currentView } = useKanbasSelector(s => s.viewReducer);
   const dispatch = useKanbasDispatch();
   const navigate = useNavigate();
 
   const fetchQuizzes = async (search?: string) => {
     if (!cid || !currentView) return;
-    const base = search ? {courseId: cid, search: search} : {courseId: cid};
+    const base = search ? { courseId: cid, search: search } : { courseId: cid };
     const quizzes = currentView === "STUDENT"
-      ? await coursesClient.findQuizzesForCourse({...base, published: true})
+      ? await coursesClient.findQuizzesForCourse({ ...base, published: true })
       : await coursesClient.findQuizzesForCourse(base);
     if (quizzes) {
       dispatch(setQuizzes(quizzes));
@@ -34,14 +34,15 @@ export default function Quizzes() {
   const togglePublish = async (id: string) => {
     let quiz = quizzes.find(q => q._id === id);
     if (quiz) {
-      quiz = {...quiz, published: !quiz.published};
+      quiz = { ...quiz, published: !quiz.published };
       await quizClient.updateQuiz(quiz);
       dispatch(updateQuiz(quiz));
     }
   };
 
   const deleteQuiz = async (id: string) => {
-    await quizClient.deleteQuiz(id)
+    await quizClient.deleteQuiz(id);
+    fetchQuizzes();
   }
 
   useEffect(() => {
@@ -52,11 +53,11 @@ export default function Quizzes() {
     <div className="ms-1">
       <div>
         <div className="d-flex mb-1 align-items-center">
-          <FaMagnifyingGlass className="position-absolute fs-4 ms-2"/>
+          <FaMagnifyingGlass className="position-absolute fs-4 ms-2" />
           <input id="wd-search-assignment"
-                className="form-control me-5 px-5 border-secondary"
-                placeholder="Search..."
-                onChange={e => fetchQuizzes(e.target.value)}/>
+            className="form-control me-5 px-5 border-secondary"
+            placeholder="Search..."
+            onChange={e => fetchQuizzes(e.target.value)} />
           <RoleView role="FACULTY">
             <Link className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
               to={`/Kanbas/Courses/${cid}/Quizzes/new-quiz/edit`}>
@@ -83,59 +84,63 @@ export default function Quizzes() {
               <TiArrowSortedDown className="me-2" /><b> Assignment Quizzes</b>
             </div>
             <ul className="wd-quizzes-list-item list-group rounded-0">
-              {quizzes.map(quiz => (
-                <li key={quiz._id} className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
-                  <div className="d-flex align-items-center">
-                    <RoleView role="FACULTY">
-                      <BsGripVertical className="me-2 fs-3" />
-                    </RoleView>
-                    <RoleView role="STUDENT" loose>
-                      <div className="me-2"/>
-                    </RoleView>
-                    <QuizIcon />
-                    <div>
-                      <Link className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
-                        to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}>
-                        <h4><b>{quiz.title}</b></h4>
-                      </Link>
+              {quizzes.length === 0 ? (
+                <p className="text-center fs-4 "> <b>Add a quiz!</b></p>
+              ) : (
+                quizzes.map(quiz => (
+                  <li key={quiz._id} className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
+                    <div className="d-flex align-items-center">
                       <RoleView role="FACULTY">
-                        <p className="mb-0">
-                          <b>{quiz.published ? "Published" : "Unpublished"}</b> | <b>Due</b> {`${new Date(quiz.due).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric"})}
-                          | ${quiz.points} pts | ${quiz.questions.length} ${quiz.questions.length == 1 ? "Question" : "Questions"}`}
-                        </p>
+                        <BsGripVertical className="me-2 fs-3" />
                       </RoleView>
                       <RoleView role="STUDENT" loose>
-                        <p className="mb-0">
-                          <b>{"Not Started"}</b> | <b>Due</b> {`${new Date(quiz.due).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric"})}
+                        <div className="me-2" />
+                      </RoleView>
+                      <QuizIcon />
+                      <div>
+                        <Link className="wd-quizzes-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
+                          to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}>
+                          <h4><b>{quiz.title}</b></h4>
+                        </Link>
+                        <RoleView role="FACULTY">
+                          <p className="mb-0">
+                            <b>{quiz.published ? "Published" : "Unpublished"}</b> | <b>Due</b> {`${new Date(quiz.due).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                           | ${quiz.points} pts | ${quiz.questions.length} ${quiz.questions.length == 1 ? "Question" : "Questions"}`}
-                        </p>
+                          </p>
+                        </RoleView>
+                        <RoleView role="STUDENT" loose>
+                          <p className="mb-0">
+                            <b>{"Not Started"}</b> | <b>Due</b> {`${new Date(quiz.due).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                          | ${quiz.points} pts | ${quiz.questions.length} ${quiz.questions.length == 1 ? "Question" : "Questions"}`}
+                          </p>
+                        </RoleView>
+                      </div>
+                    </div>
+                    <div className="float-end">
+                      <RoleView role="FACULTY">
+                        <div className="d-flex">
+                          <button className="btn"
+                            onClick={() => togglePublish(quiz._id)}>
+                            {quiz.published === false
+                              ? <MdUnpublished className="text-danger fs-4" />
+                              : <GreenCheckmark />}
+                          </button>
+                          <div className="dropdown ms-2">
+                            <button type="button" data-bs-toggle="dropdown" aria-expanded="false" className="btn">
+                              <IoEllipsisVertical className="fs-4" />
+                            </button>
+                            <form className="dropdown-menu p-4">
+                              <button className="dropdown-item mb-3" onClick={() => navigate(`${quiz._id}/edit`)}>Edit</button>
+                              <button className="dropdown-item mb-3" onClick={() => deleteQuiz(quiz._id)}>Delete</button>
+                              <button className="dropdown-item mb-3" onClick={() => togglePublish(quiz._id)}>Publish</button>
+                            </form>
+                          </div>
+                        </div>
                       </RoleView>
                     </div>
-                  </div>
-                  <div className="float-end">
-                    <RoleView role="FACULTY">
-                      <div className="d-flex">
-                        <button className="btn"
-                          onClick={() => togglePublish(quiz._id)}>
-                          {quiz.published === false 
-                            ? <MdUnpublished className="text-danger fs-4" />
-                            : <GreenCheckmark />}
-                        </button>
-                        <div className="dropdown ms-2">
-                          <button type="button" data-bs-toggle="dropdown" aria-expanded="false" className="btn">
-                            <IoEllipsisVertical className="fs-4" />
-                          </button>
-                          <form className="dropdown-menu p-4">
-                            <button className="dropdown-item mb-3" onClick={() => navigate(`${quiz._id}/edit`)}>Edit</button>
-                            <button className="dropdown-item mb-3" onClick={() => deleteQuiz(quiz._id)}>Delete</button>
-                            <button className="dropdown-item mb-3" onClick={() => togglePublish(quiz._id)}>Publish</button>
-                          </form>
-                        </div>
-                      </div>
-                    </RoleView>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                ))
+              )}
             </ul>
           </li>
         </ul>

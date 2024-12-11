@@ -9,9 +9,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { QuestionType, QuizQuestion } from './QuestionEditors';
 import { AssignmentGroup, QuizType } from './quizzesReducer';
 import { isMultipleChoiceAnswer } from './QuestionEditors/MultipleChoiceEditor';
-import { isTrueFalseAnswer } from './QuestionEditors/TrueFalseQuestionEditor';
+import { isTrueFalseAnswer, TrueFalseAnswer } from './QuestionEditors/TrueFalseQuestionEditor';
 import { useKanbasSelector } from '../../../hooks';
 import { isFillInTheBlankAnswer } from './QuestionEditors/FillInTheBlankEditor';
+import { RoleView } from '../../Account/RoleShownContent';
 
 
 
@@ -197,12 +198,13 @@ export interface Quiz {
 // ];
 
 
-export default function QuizPreview() {
+export default function QuizResults() {
     const { quizzes } = useKanbasSelector(s => s.quizzesReducer);
     const [userAnswers, setUserAnswers] = useState<string[]>([]);
     const [startTime, setStartTime] = useState<string>("");
     const location = useLocation();
     const score = location.state?.totalScore; // Retrieve score from state
+    const results = location.state?.results; // Retrieve results from state
     const { qid } = useParams();
     const quiz = quizzes.find(q => q._id === qid);
     const totalPoints = quiz ? quiz.questions.reduce((total, question) => total + question.pts, 0) : 0;
@@ -237,10 +239,18 @@ export default function QuizPreview() {
             {quiz ? (
                 <>
                     <h2><b>{quiz.title}</b></h2>
-                    <div className="alert alert-primary d-flex align-items-center gap-2" role="alert">
-                        <RiErrorWarningLine className="fs-4" />
-                        <span>This is the results section from the quiz</span>
-                    </div>
+                    <RoleView role="FACULTY">
+                        <div className="alert alert-danger d-flex align-items-center gap-2" role="alert">
+                            <RiErrorWarningLine className="fs-4" />
+                            <span>This is a preview of the published version of the quiz</span>
+                        </div>
+                    </RoleView>
+                    <RoleView role="STUDENT">
+                        <div className="alert alert-primary d-flex align-items-center gap-2" role="alert">
+                            <RiErrorWarningLine className="fs-4" />
+                            <span>This is the results section from the quiz</span>
+                        </div>
+                    </RoleView>
                 </>
             ) : (
                 <h2>Quiz not found.</h2>
@@ -302,15 +312,35 @@ export default function QuizPreview() {
 
                 </div>
                 <div className='card-footer text-muted'>
-                    <p>You Chose: {userAnswers[currentQuestionIndex] || 'No answer'}</p>
                     {quiz?.questions[currentQuestionIndex]?.type === QuestionType.TRUE_FALSE && (
-                        <p>Correct Answer: {isTrueFalseAnswer(quiz.questions[currentQuestionIndex].answer) && quiz.questions[currentQuestionIndex].answer.correctAnswer}</p>
+                        <div>
+                            <p className={isTrueFalseAnswer(quiz.questions[currentQuestionIndex].answer) &&
+                                (results[currentQuestionIndex]?.userAnswer.toLowerCase() ===
+                                    String((quiz.questions[currentQuestionIndex].answer as TrueFalseAnswer).correctAnswer).toLowerCase()) ? "text-success" : "text-danger"}>
+                                You Chose: {results[currentQuestionIndex]?.userAnswer || 'No answer'}
+                            </p>
+                            <p className={"text-success"}>
+                                Correct Answer: {isTrueFalseAnswer(quiz.questions[currentQuestionIndex].answer) ? (quiz.questions[currentQuestionIndex].answer.correctAnswer ? "True" : "False") : "N/A"}
+                            </p>
+                        </div>
                     )}
                     {quiz?.questions[currentQuestionIndex]?.type === QuestionType.MULTIPLE_CHOICE && (
-                        <p>Correct Answer: {isMultipleChoiceAnswer(quiz.questions[currentQuestionIndex].answer) && quiz.questions[currentQuestionIndex].answer.answers.find(answer => answer.correct)?.text}</p>
+                        <div>
+                            <p className={isMultipleChoiceAnswer(quiz.questions[currentQuestionIndex].answer) && (results[currentQuestionIndex]?.userAnswer === quiz.questions[currentQuestionIndex].answer.answers.find(answer => answer.correct)?.text) ? "text-success" : "text-danger"}>
+                                You Chose: {results[currentQuestionIndex]?.userAnswer || 'No answer'}
+                            </p>
+                            <p className={"text-success"}>
+                                Correct Answer: {isMultipleChoiceAnswer(quiz.questions[currentQuestionIndex].answer) && quiz.questions[currentQuestionIndex].answer.answers.find(answer => answer.correct)?.text}
+                            </p>
+                        </div>
                     )}
                     {quiz?.questions[currentQuestionIndex]?.type === QuestionType.FILL_IN_THE_BLANK && (
-                        <p>Correct Answer: {isFillInTheBlankAnswer(quiz.questions[currentQuestionIndex].answer) && quiz.questions[currentQuestionIndex].answer.answers.map(answer => answer.text).join(', ')}</p>
+                        <div>
+                            <p className={isFillInTheBlankAnswer(quiz.questions[currentQuestionIndex].answer) && quiz.questions[currentQuestionIndex]?.answer.answers.map(answer => answer.text).join(', ').toLowerCase().includes(results[currentQuestionIndex]?.userAnswer.toLowerCase()) ? "text-success" : "text-danger"}>
+                                You Chose: {results[currentQuestionIndex]?.userAnswer || 'No answer'}
+                            </p>
+                            <p className='text-success'>Correct Answer: {isFillInTheBlankAnswer(quiz.questions[currentQuestionIndex].answer) && quiz.questions[currentQuestionIndex].answer.answers.map(answer => answer.text).join(', ')}</p>
+                        </div>
                     )}
                 </div>
 
@@ -333,14 +363,6 @@ export default function QuizPreview() {
                 </div>
             </div>
             <br />
-            <br />
-            <button
-                onClick={() => navigate(`../Quizzes/${qid}/edit`)}
-                className="btn btn-secondary w-100 d-flex align-items-center gap-2 p-2"
-            >
-                <FaPencilAlt />
-                <span>Keep Editing this Quiz</span>
-            </button>
             <br />
             <br />
 

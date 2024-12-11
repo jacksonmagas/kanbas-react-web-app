@@ -113,6 +113,7 @@ export default function QuizTake() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [startTime, setStartTime] = useState<string>("");
     const [score, setScore] = useState<number | null>(null);
+    const [results, setResults] = useState<{ questionId: string; userAnswer: string; correctAnswer: string }[]>([]);
 
     useEffect(() => {
         const now = new Date();
@@ -131,14 +132,21 @@ export default function QuizTake() {
 
     const handleAnswerChange = (answer: string) => {
         const updatedAnswers = [...userAnswers];
-        updatedAnswers[currentQuestionIndex] = answer; // Store answer for current question
+        updatedAnswers[currentQuestionIndex] = answer;
         setUserAnswers(updatedAnswers);
+    };
+
+    const handleFillInTheBlankChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        handleAnswerChange(event.target.value);
     };
 
     const handleSubmit = () => {
         if (quiz) {
             let totalScore = 0;
+            const newResults: any = []; // Array to hold the results
+
             quiz.questions.forEach((question, index) => {
+                let correctAnswer = "";
                 if (question.type === QuestionType.TRUE_FALSE && isTrueFalseAnswer(question.answer)) {
                     const correctAnswer = question.answer.correctAnswer ? "True" : "False";
                     if (userAnswers[index] === correctAnswer) {
@@ -164,12 +172,22 @@ export default function QuizTake() {
                     if (isCorrect) {
                         totalScore += question.pts;
                     }
-
+                    correctAnswer = possibleAnswers.map(answer => answer.text).join(", "); // Store all possible correct answers
                 }
+
+                newResults.push({
+                    questionId: question._id,
+                    userAnswer: userAnswers[index],
+                    correctAnswer: correctAnswer,
+                });
             });
+
+            setResults(newResults);
+            setScore(totalScore);
             setScore(totalScore);
             console.log(totalScore);
-            navigate(`../Quizzes/${qid}/results`, { state: { totalScore } });
+            navigate(`../Quizzes/${qid}/results`, { state: { totalScore, results: newResults } });
+
         }
     };
 
@@ -184,6 +202,7 @@ export default function QuizTake() {
             )}
             <h6>Started at: {startTime}</h6>
             <h3><b>Quiz Instructions</b></h3>
+            <h4>{quiz?.description}</h4>
             <hr />
             <div className="card ms-5 me-5">
                 <div className="card-header d-flex justify-content-between align-items-center">
@@ -246,7 +265,7 @@ export default function QuizTake() {
                                     && (quiz.questions[currentQuestionIndex].answer)
                                     && (<div>
                                         <label>
-                                            <input type="text" name="answer" placeholder="" />
+                                            <input type="text" name="answer" placeholder="" onChange={handleFillInTheBlankChange} />
                                         </label>
                                     </div>
                                     )}

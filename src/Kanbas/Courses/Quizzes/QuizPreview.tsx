@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RiErrorWarningLine } from "react-icons/ri";
 import { MdArrowRight } from "react-icons/md";
 import { FaPencilAlt } from "react-icons/fa";
@@ -10,6 +10,7 @@ import { AssignmentGroup, QuizType } from './quizzesReducer';
 import { isMultipleChoiceAnswer } from './QuestionEditors/MultipleChoiceEditor';
 import { isTrueFalseAnswer } from './QuestionEditors/TrueFalseQuestionEditor';
 import { useKanbasSelector } from '../../../hooks';
+import { isFillInTheBlankAnswer } from './QuestionEditors/FillInTheBlankEditor';
 
 
 
@@ -107,8 +108,19 @@ export default function QuizPreview() {
     const { quizzes } = useKanbasSelector(s => s.quizzesReducer);
 
     const navigate = useNavigate();
+    const [userAnswers, setUserAnswers] = useState<string[]>([]);
     const { qid } = useParams();
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [startTime, setStartTime] = useState<string>("");
+    const [score, setScore] = useState<number | null>(null);
+    const [results, setResults] = useState<{ questionId: string; userAnswer: string; correctAnswer: string }[]>([]);
+
+    useEffect(() => {
+        const now = new Date();
+        const options: Intl.DateTimeFormatOptions = { month: 'short', hour: 'numeric', day: 'numeric', minute: 'numeric', hour12: true };
+        setStartTime(now.toLocaleString('en-US', options));
+    }, []);
+
 
     const quiz = quizzes.find(q => q._id === qid);
 
@@ -117,6 +129,68 @@ export default function QuizPreview() {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         }
     };
+
+    const handleAnswerChange = (answer: string) => {
+        const updatedAnswers = [...userAnswers];
+        updatedAnswers[currentQuestionIndex] = answer;
+        setUserAnswers(updatedAnswers);
+    };
+
+    const handleFillInTheBlankChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        handleAnswerChange(event.target.value);
+    };
+
+    const handleSubmit = () => {
+        if (quiz) {
+            let totalScore = 0;
+            const newResults: any = []; // Array to hold the results
+
+            quiz.questions.forEach((question, index) => {
+                let correctAnswer = "";
+                if (question.type === QuestionType.TRUE_FALSE && isTrueFalseAnswer(question.answer)) {
+                    const correctAnswer = question.answer.correctAnswer ? "True" : "False";
+                    if (userAnswers[index] === correctAnswer) {
+                        totalScore += question.pts;
+                    }
+                } else if (question.type === QuestionType.MULTIPLE_CHOICE && isMultipleChoiceAnswer(question.answer)) {
+                    const correctAnswer = question.answer.answers.find(answer => answer.correct)?.text;
+                    if (userAnswers[index] === correctAnswer) {
+                        totalScore += question.pts;
+                    }
+                } else if (question.type === QuestionType.FILL_IN_THE_BLANK && isFillInTheBlankAnswer(question.answer)) {
+                    const userAnswer = userAnswers[index];
+                    const possibleAnswers = question.answer.answers;
+
+                    const isCorrect = possibleAnswers.some(answer => {
+                        if (answer.caseSensitive) {
+                            return userAnswer === answer.text;
+                        } else {
+                            return userAnswer.toLowerCase() === answer.text.toLowerCase();
+                        }
+                    });
+
+                    if (isCorrect) {
+                        totalScore += question.pts;
+                    }
+                    correctAnswer = possibleAnswers.map(answer => answer.text).join(", "); // Store all possible correct answers
+                }
+
+                newResults.push({
+                    questionId: question._id,
+                    userAnswer: userAnswers[index],
+                    correctAnswer: correctAnswer,
+                });
+            });
+
+            setResults(newResults);
+            setScore(totalScore);
+            setScore(totalScore);
+            console.log(totalScore);
+            navigate(`../Quizzes/${qid}/results`, { state: { totalScore, results: newResults } });
+
+        }
+    };
+
 
     return (
         <div>
@@ -133,6 +207,7 @@ export default function QuizPreview() {
             )}
             <h6>Started at: Nov at 8:19am</h6>
             <h3><b>Quiz Instructions</b></h3>
+            <h4>{quiz?.description}</h4>
             <hr />
             <div className="card ms-5 me-5">
                 <div className="card-header d-flex justify-content-between align-items-center">
@@ -150,12 +225,24 @@ export default function QuizPreview() {
                                 {quiz.questions[currentQuestionIndex]?.type === QuestionType.TRUE_FALSE && (
                                     <div>
                                         <label>
-                                            <input type="radio" name="answer" value="True" />
+                                            <input
+                                                type="radio"
+                                                name="answer"
+                                                value="True"
+                                                checked={userAnswers[currentQuestionIndex] === "True"}
+                                                onChange={() => handleAnswerChange("True")}
+                                            />
                                             True
                                         </label>
                                         <hr />
                                         <label>
-                                            <input type="radio" name="answer" value="False" />
+                                            <input
+                                                type="radio"
+                                                name="answer"
+                                                value="False"
+                                                checked={userAnswers[currentQuestionIndex] === "False"}
+                                                onChange={() => handleAnswerChange("False")}
+                                            />
                                             False
                                         </label>
                                     </div>
@@ -166,7 +253,13 @@ export default function QuizPreview() {
                                         {quiz.questions[currentQuestionIndex]?.answer.answers.map((answer, index) => (
                                             <div key={index}>
                                                 <label>
-                                                    <input type="radio" name="answer" value={answer.text} />
+                                                    <input
+                                                        type="radio"
+                                                        name="answer"
+                                                        value={answer.text}
+                                                        checked={userAnswers[currentQuestionIndex] === answer.text}
+                                                        onChange={() => handleAnswerChange(answer.text)}
+                                                    />
                                                     {answer.text}
                                                 </label>
                                                 <hr />
@@ -177,7 +270,7 @@ export default function QuizPreview() {
                                     && (quiz.questions[currentQuestionIndex].answer)
                                     && (<div>
                                         <label>
-                                            <input type="text" name="answer" placeholder="" />
+                                            <input type="text" name="answer" placeholder="" onChange={handleFillInTheBlankChange} />
                                         </label>
                                     </div>
                                     )}
@@ -203,7 +296,7 @@ export default function QuizPreview() {
             <div className="border border-2 p-2">
                 <div className="d-flex justify-content-end align-items-center gap-3">
                     <p className="mb-0">Quiz saved at 8:19am</p>
-                    <button className="btn btn-secondary">Submit Quiz</button>
+                    <button className="btn btn-secondary" onClick={handleSubmit}>Submit Quiz</button>
                 </div>
             </div>
             <br />
