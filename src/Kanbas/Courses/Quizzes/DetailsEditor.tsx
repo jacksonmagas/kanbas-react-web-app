@@ -4,6 +4,7 @@ import GreenCheckmark from "../Modules/GreenCheckmark";
 import { AssignmentGroup, Quiz, QuizType } from "./quizzesReducer";
 
 export default function DetailsEditor({quiz, setQuiz } : {quiz: Quiz, setQuiz : (quiz: Quiz) => void}) {
+  const [multipleAttempts, setMultipleAttempts] = useState(false);
   return quiz ? (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center">
@@ -30,7 +31,6 @@ export default function DetailsEditor({quiz, setQuiz } : {quiz: Quiz, setQuiz : 
           onChange={(e) => setQuiz({ ...quiz, title: e.target.value })}
         />
       </div>
-
       {/* Quiz Instructions */}
       <div className="mb-3">
         <label htmlFor="description" className="form-label">
@@ -87,7 +87,9 @@ export default function DetailsEditor({quiz, setQuiz } : {quiz: Quiz, setQuiz : 
               className="form-check-input border-secondary"
               id="shuffleAnswers"
               checked={quiz.shuffleAnswers}
-              onChange={e => setQuiz({...quiz, shuffleAnswers: e.target.checked})} />
+              onChange={e => {
+                setQuiz({...quiz, shuffleAnswers: e.target.checked})
+              }}/>
             <label
               className="form-check-label"
               htmlFor="shuffleAnswers">
@@ -101,7 +103,7 @@ export default function DetailsEditor({quiz, setQuiz } : {quiz: Quiz, setQuiz : 
               type="checkbox"
               className="form-check-input border-secondary"
               id="timeLimit"
-              defaultChecked={quiz.timeLimitEnabled}
+              checked={quiz.timeLimitEnabled}
               onChange={e => setQuiz({...quiz, timeLimitEnabled: e.target.checked})}/>
             <label
               className="form-check-label me-2 ms-2"
@@ -125,8 +127,9 @@ export default function DetailsEditor({quiz, setQuiz } : {quiz: Quiz, setQuiz : 
               type="checkbox"
               className="form-check-input border-secondary"
               id="multipleAttempts"
-              checked={quiz.attempts > 1}
+              defaultChecked={quiz.attempts > 1}
               onChange={e => {
+                setMultipleAttempts(e.target.checked)
                 if (!e.target.checked) {
                   setQuiz({...quiz, attempts: 1})
                 } else {
@@ -138,15 +141,16 @@ export default function DetailsEditor({quiz, setQuiz } : {quiz: Quiz, setQuiz : 
               htmlFor="multipleAttempts">
               Allow Multiple Attempts
             </label>
-            {quiz.attempts > 1 && <input
+            {multipleAttempts && <input
               type="number"
+              min={2}
               className="form-control border-secondary"
               id="numberOfAttempts"
               value={quiz.attempts}
               onChange={(e) => setQuiz({ ...quiz, attempts: Number(e.target.value) })}
               style={{ width: '80px' }}
             />}
-            {quiz.attempts > 1 && <span className="ms-2">Attempts</span>}
+            {multipleAttempts && <span className="ms-2">Attempts</span>}
           </div>
         </div>
       </div>

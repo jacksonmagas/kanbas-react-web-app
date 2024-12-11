@@ -4,20 +4,21 @@ import { QuizQuestion } from ".";
 
 type Answer = {
   text: string,
-  caseSensitive: boolean
 };
 
 export interface FillInTheBlankAnswer {
+  caseSensitive: boolean,
   answers: Answer[]
 }
 
 function isAnswer(obj: any): obj is Answer {
-  return obj && typeof obj.text === 'string' && typeof obj.caseSensitive === 'boolean';
+  return obj && typeof obj.text === 'string';
 }
 
 export function isFillInTheBlankAnswer(obj: any): obj is FillInTheBlankAnswer {
   return (
     obj &&
+    typeof obj.caseSensitive === "boolean" && 
     Array.isArray(obj.answers) &&
     obj.answers.every(isAnswer)
   );
@@ -29,14 +30,15 @@ const FillInTheBlankEditor = ({question, setQuestion} : {question: QuizQuestion,
   };
 
   const setAnswers = (answers: Answer[]) => {
-    setQuestion({...question, answer: {answers: answers}})
+    const cs = isFillInTheBlankAnswer(question.answer) ? question.answer.caseSensitive : true;
+    setQuestion({...question, answer: {caseSensitive: cs, answers: answers}})
   }
 
   const addAnswer = (): void => {
     if (isFillInTheBlankAnswer(question.answer)) {
-      setAnswers([...question.answer.answers, { text: "", caseSensitive: false }]);
+      setAnswers([...question.answer.answers, { text: ""}]);
     } else {
-      setAnswers([{ text: "", caseSensitive: false}])
+      setAnswers([{text: ""}])
     }
   };
 
@@ -73,6 +75,19 @@ const FillInTheBlankEditor = ({question, setQuestion} : {question: QuizQuestion,
             minHeight: "90px",
           }}
         />
+      </div>
+      <div>
+        <label htmlFor="caseSensitive" className="me-2">
+          Case sensitive
+        </label>
+        {<input type="checkbox"
+              className="form-check-input border-secondary"
+              checked={isFillInTheBlankAnswer(question.answer) && question.answer.caseSensitive || true}
+              id="caseSensitive"
+              onChange={e => {
+                const answers = isFillInTheBlankAnswer(question.answer) ? question.answer.answers : [];
+                setQuestion({...question, answer: {answers: answers, caseSensitive: e.target.checked}})
+              }}/>}
       </div>
       <div style={{ marginTop: "20px" }}>
         <h3>Answers:</h3>
