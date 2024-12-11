@@ -30,6 +30,14 @@ export default function Details() {
                     </button>
                 </RoleView>
                 <RoleView role="STUDENT" loose>
+
+                    <button
+                        className="btn btn-primary btn-sm btn-primary"
+                        onClick={() => navigate(`../Quizzes/${qid}/results`)}
+                    >
+                        View Last Attempt
+                    </button>
+
                     <button
                         className="btn btn-primary btn-sm btn-danger"
                         onClick={() => navigate("start")}
