@@ -32,6 +32,7 @@ export interface Quiz {
     type: QuizType,
     group: AssignmentGroup,
     shuffleAnswers: boolean,
+    timeLimitEnabled: boolean,
     timeLimit: number,
     attempts: number,
     assignTo: string,

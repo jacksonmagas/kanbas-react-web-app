@@ -162,7 +162,7 @@ export default function QuizTake() {
                     const possibleAnswers = question.answer.answers;
 
                     const isCorrect = possibleAnswers.some(answer => {
-                        if (answer.caseSensitive) {
+                        if (isFillInTheBlankAnswer(question.answer) && question.answer.caseSensitive) {
                             return userAnswer === answer.text;
                         } else {
                             return userAnswer.toLowerCase() === answer.text.toLowerCase();

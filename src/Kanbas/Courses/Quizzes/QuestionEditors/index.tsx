@@ -66,7 +66,7 @@ const QuestionEditor = ({ question, setQuestion, setEditing }
         if (!isFillInTheBlankAnswer(newQuestion.answer)) {
           return;
         }
-        setNewQuestion({...newQuestion, answer: {answers: newQuestion.answer.answers.map(a => ({...a, text: a.text.trim()})).filter(a => a.text !== "")}})
+        setNewQuestion({...newQuestion, answer: {caseSensitive: true, answers: newQuestion.answer.answers.map(a => ({...a, text: a.text.trim()})).filter(a => a.text !== "")}})
         if (newQuestion.answer.answers.length === 0) {
           alert("Please provide at least one correct answer")
           return

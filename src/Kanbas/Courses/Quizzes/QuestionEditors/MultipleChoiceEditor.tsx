@@ -80,16 +80,6 @@ const MultipleChoiceEditor = ({question, setQuestion} : {question: QuizQuestion,
         <label>
           <strong>Question:</strong>
         </label>
-        <div style={{ marginTop: "10px", color: "#888" }}>
-          <div style={{ display: "flex", gap: "10px" }}>
-            <span>Edit</span>
-            <span>View</span>
-            <span>Insert</span>
-            <span>Format</span>
-            <span>Tools</span>
-            <span>Table</span>
-          </div>
-        </div>
         <ReactQuill
           value={question.question}
           onChange={handleQuestionChange}
