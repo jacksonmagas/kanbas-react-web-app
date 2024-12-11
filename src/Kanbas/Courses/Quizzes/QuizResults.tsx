@@ -364,6 +364,15 @@ export default function QuizResults() {
             </div>
             <br />
             <br />
+            <RoleView role="FACULTY">
+                <button
+                    onClick={() => navigate(`../Quizzes/${qid}/edit`)}
+                    className="btn btn-secondary w-100 d-flex align-items-center gap-2 p-2"
+                >
+                    <FaPencilAlt />
+                    <span>Keep Editing this Quiz</span>
+                </button>
+            </RoleView>
             <br />
 
             <div className="questions-container">
