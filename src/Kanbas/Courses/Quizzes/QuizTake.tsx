@@ -3,7 +3,7 @@ import { RiErrorWarningLine } from "react-icons/ri";
 import { MdArrowRight } from "react-icons/md";
 import { FaPencilAlt } from "react-icons/fa";
 import { RxQuestionMarkCircled } from "react-icons/rx";
-
+import * as quizClient from "./client"
 import { useNavigate, useParams } from "react-router-dom";
 import { QuestionType, QuizQuestion } from './QuestionEditors';
 import { AssignmentGroup, QuizType } from './quizzesReducer';
@@ -12,101 +12,20 @@ import { isTrueFalseAnswer } from './QuestionEditors/TrueFalseQuestionEditor';
 import { useKanbasSelector } from '../../../hooks';
 import { isFillInTheBlankAnswer } from './QuestionEditors/FillInTheBlankEditor';
 
-
-
-export interface Quiz {
-    _id: string,
-    instructions: string,
-    title: string,
-    type: QuizType,
-    group: AssignmentGroup,
-    points: number,
-    status: string,
-    shuffleAnswers: boolean,
-    timeLimit: number,
-    attempts: string,
-    showAnswers: string,
-    questions: QuizQuestion[],
-    due: string,
-    availableFrom: string,
-    availableUntil: string,
-    publish: boolean,
-
+interface Answer {
+    question: string,
+    answer: string
 }
-// const quizzes: Quiz[] = [
-//     {
-//         _id: "123",
-//         instructions: "description",
-//         title: "Q1 - HTML",
-//         status: "closed",
-//         points: 2,
-//         type: QuizType.GRADED,
-//         group: AssignmentGroup.QUIZZES,
-//         shuffleAnswers: true,
-//         timeLimit: 20,
-//         attempts: "1",
-//         showAnswers: "After submission",
-//         questions: [
-//             {
-//                 _id: "0",
-//                 title: "foo",
-//                 pts: 5,
-//                 type: QuestionType.TRUE_FALSE,
-//                 question: "is water wet",
-//                 answer: {
-//                     correctAnswer: false
-//                 }
-//             },
-//             {
-//                 _id: "1",
-//                 title: "whatever",
-//                 pts: 10,
-//                 type: QuestionType.MULTIPLE_CHOICE,
-//                 question: "what is 2+2",
-//                 answer: {
-//                     answers: [
-//                         {
-//                             text: "3",
-//                             correct: false
-//                         },
-//                         {
-//                             text: "4",
-//                             correct: true
-//                         }
-//                     ]
-//                 }
-//             },
-//             {
-//                 _id: "2",
-//                 title: "whatever",
-//                 pts: 10,
-//                 type: QuestionType.FILL_IN_THE_BLANK,
-//                 question: "what is 2+2",
-//                 answer: {
-//                     answers: [
-//                         {
-//                             text: "3",
-//                             caseSensitive: false
-//                         },
-//                         {
-//                             text: "4",
-//                             caseSensitive: true
-//                         }
-//                     ]
-//                 }
-//             }
-//         ],
-//         due: "232",
-//         availableFrom: "232",
-//         availableUntil: "232",
-//         publish: true,
-//     }
-// ];
 
+export interface QuizAttempt {
+    quiz: string,
+    user: string,
+    answers: Answer[]
+}
 
 export default function QuizTake() {
     const { quizzes } = useKanbasSelector(s => s.quizzesReducer);
-
+    const { currentUser } = useKanbasSelector(s => s.accountReducer);
     const navigate = useNavigate();
     const [userAnswers, setUserAnswers] = useState<string[]>([]);
     const { qid } = useParams();
@@ -140,11 +59,11 @@ export default function QuizTake() {
         handleAnswerChange(event.target.value);
     };
 
-    const handleSubmit = () => {
-        if (quiz) {
+    const handleSubmit = async () => {
+        if (quiz && currentUser) {
             let totalScore = 0;
             const newResults: any = []; // Array to hold the results
-
+            let answers: Answer[] = []
             quiz.questions.forEach((question, index) => {
                 let correctAnswer = "";
                 if (question.type === QuestionType.TRUE_FALSE && isTrueFalseAnswer(question.answer)) {
@@ -180,14 +99,15 @@ export default function QuizTake() {
                     userAnswer: userAnswers[index],
                     correctAnswer: correctAnswer,
                 });
+                answers.push({question: question._id, answer: userAnswers[index]})
             });
 
             setResults(newResults);
             setScore(totalScore);
             setScore(totalScore);
             console.log(totalScore);
+            await quizClient.createQuizAttempt({ user: currentUser._id, quiz: quiz._id ,answers: answers})
             navigate(`../Quizzes/${qid}/results`, { state: { totalScore, results: newResults } });
-
         }
     };
 

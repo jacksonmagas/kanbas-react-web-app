@@ -29,7 +29,7 @@ export default function Details() {
                         <FaPencilAlt /> Edit
                     </button>
                 </RoleView>
-                <RoleView role="STUDENT">
+                <RoleView role="STUDENT" loose>
                     <button
                         className="btn btn-primary btn-sm btn-danger"
                         onClick={() => navigate("start")}
