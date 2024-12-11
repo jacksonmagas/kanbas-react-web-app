@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RiErrorWarningLine } from "react-icons/ri";
 import { MdArrowRight } from "react-icons/md";
 import { FaPencilAlt } from "react-icons/fa";
@@ -10,6 +10,7 @@ import { AssignmentGroup, QuizType } from './quizzesReducer';
 import { isMultipleChoiceAnswer } from './QuestionEditors/MultipleChoiceEditor';
 import { isTrueFalseAnswer } from './QuestionEditors/TrueFalseQuestionEditor';
 import { useKanbasSelector } from '../../../hooks';
+import { isFillInTheBlankAnswer } from './QuestionEditors/FillInTheBlankEditor';
 
 
 
@@ -103,12 +104,22 @@ export interface Quiz {
 // ];
 
 
-export default function QuizPreview() {
+export default function QuizTake() {
     const { quizzes } = useKanbasSelector(s => s.quizzesReducer);
 
     const navigate = useNavigate();
+    const [userAnswers, setUserAnswers] = useState<string[]>([]);
     const { qid } = useParams();
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [startTime, setStartTime] = useState<string>("");
+    const [score, setScore] = useState<number | null>(null);
+
+    useEffect(() => {
+        const now = new Date();
+        const options: Intl.DateTimeFormatOptions = { month: 'short', hour: 'numeric', day: 'numeric', minute: 'numeric', hour12: true };
+        setStartTime(now.toLocaleString('en-US', options));
+    }, []);
+
 
     const quiz = quizzes.find(q => q._id === qid);
 
@@ -118,20 +129,60 @@ export default function QuizPreview() {
         }
     };
 
+    const handleAnswerChange = (answer: string) => {
+        const updatedAnswers = [...userAnswers];
+        updatedAnswers[currentQuestionIndex] = answer; // Store answer for current question
+        setUserAnswers(updatedAnswers);
+    };
+
+    const handleSubmit = () => {
+        if (quiz) {
+            let totalScore = 0;
+            quiz.questions.forEach((question, index) => {
+                if (question.type === QuestionType.TRUE_FALSE && isTrueFalseAnswer(question.answer)) {
+                    const correctAnswer = question.answer.correctAnswer ? "True" : "False";
+                    if (userAnswers[index] === correctAnswer) {
+                        totalScore += question.pts;
+                    }
+                } else if (question.type === QuestionType.MULTIPLE_CHOICE && isMultipleChoiceAnswer(question.answer)) {
+                    const correctAnswer = question.answer.answers.find(answer => answer.correct)?.text;
+                    if (userAnswers[index] === correctAnswer) {
+                        totalScore += question.pts;
+                    }
+                } else if (question.type === QuestionType.FILL_IN_THE_BLANK && isFillInTheBlankAnswer(question.answer)) {
+                    const userAnswer = userAnswers[index];
+                    const possibleAnswers = question.answer.answers;
+
+                    const isCorrect = possibleAnswers.some(answer => {
+                        if (answer.caseSensitive) {
+                            return userAnswer === answer.text;
+                        } else {
+                            return userAnswer.toLowerCase() === answer.text.toLowerCase();
+                        }
+                    });
+
+                    if (isCorrect) {
+                        totalScore += question.pts;
+                    }
+
+                }
+            });
+            setScore(totalScore);
+            console.log(totalScore);
+            navigate(`../Quizzes/${qid}/results`, { state: { totalScore } });
+        }
+    };
+
     return (
         <div>
             {quiz ? (
                 <>
                     <h2><b>{quiz.title}</b></h2>
-                    <div className="alert alert-danger d-flex align-items-center gap-2" role="alert">
-                        <RiErrorWarningLine className="fs-4" />
-                        <span>This is a preview of the published version of the quiz</span>
-                    </div>
                 </>
             ) : (
                 <h2>Quiz not found.</h2>
             )}
-            <h6>Started at: Nov at 8:19am</h6>
+            <h6>Started at: {startTime}</h6>
             <h3><b>Quiz Instructions</b></h3>
             <hr />
             <div className="card ms-5 me-5">
@@ -143,19 +194,31 @@ export default function QuizPreview() {
                     {quiz ? (
                         <>
                             <p className="card-text" dangerouslySetInnerHTML={{ __html: quiz.questions[currentQuestionIndex]?.question }}>
-
+                                {/* {quiz.questions[currentQuestionIndex]?.question} */}
                             </p>
                             <hr />
                             <div>
                                 {quiz.questions[currentQuestionIndex]?.type === QuestionType.TRUE_FALSE && (
                                     <div>
                                         <label>
-                                            <input type="radio" name="answer" value="True" />
+                                            <input
+                                                type="radio"
+                                                name="answer"
+                                                value="True"
+                                                checked={userAnswers[currentQuestionIndex] === "True"}
+                                                onChange={() => handleAnswerChange("True")}
+                                            />
                                             True
                                         </label>
                                         <hr />
                                         <label>
-                                            <input type="radio" name="answer" value="False" />
+                                            <input
+                                                type="radio"
+                                                name="answer"
+                                                value="False"
+                                                checked={userAnswers[currentQuestionIndex] === "False"}
+                                                onChange={() => handleAnswerChange("False")}
+                                            />
                                             False
                                         </label>
                                     </div>
@@ -166,7 +229,13 @@ export default function QuizPreview() {
                                         {quiz.questions[currentQuestionIndex]?.answer.answers.map((answer, index) => (
                                             <div key={index}>
                                                 <label>
-                                                    <input type="radio" name="answer" value={answer.text} />
+                                                    <input
+                                                        type="radio"
+                                                        name="answer"
+                                                        value={answer.text}
+                                                        checked={userAnswers[currentQuestionIndex] === answer.text}
+                                                        onChange={() => handleAnswerChange(answer.text)}
+                                                    />
                                                     {answer.text}
                                                 </label>
                                                 <hr />
@@ -203,19 +272,11 @@ export default function QuizPreview() {
             <div className="border border-2 p-2">
                 <div className="d-flex justify-content-end align-items-center gap-3">
                     <p className="mb-0">Quiz saved at 8:19am</p>
-                    <button className="btn btn-secondary">Submit Quiz</button>
+                    <button className="btn btn-secondary" onClick={handleSubmit}>Submit Quiz</button>
                 </div>
             </div>
             <br />
-            <br />
-            <button
-                onClick={() => navigate(`../Quizzes/${qid}/edit`)}
-                className="btn btn-secondary w-100 d-flex align-items-center gap-2 p-2"
-            >
-                <FaPencilAlt />
-                <span>Keep Editing this Quiz</span>
-            </button>
-            <br />
+
             <br />
 
             <div className="questions-container">
