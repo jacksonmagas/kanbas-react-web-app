@@ -1,6 +1,7 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaPencilAlt } from "react-icons/fa";
 import { useKanbasSelector } from "../../../hooks";
+import { RoleView } from "../../Account/RoleShownContent";
 
 export default function Details() {
     const navigate = useNavigate();
@@ -15,17 +16,27 @@ export default function Details() {
     return (
         <div>
             <div className="d-flex justify-content-center gap-2 mb-2">
+                <RoleView role="FACULTY">
+                    <button
+                        className="btn btn-secondary btn-sm"
+                        onClick={() => navigate("preview")}>
+                        Preview
+                    </button>
+                    <button
+                        className="btn btn-secondary btn-sm"
+                        onClick={() => navigate("edit")}
+                    >
+                        <FaPencilAlt /> Edit
+                    </button>
+                </RoleView>
+                {/* <RoleView role="STUDENT"> */}
                 <button
-                    className="btn btn-secondary btn-sm"
-                    onClick={() => navigate("preview")}>
-                    Preview
-                </button>
-                <button
-                    className="btn btn-secondary btn-sm"
-                    onClick={() => navigate("edit")}
+                    className="btn btn-primary btn-sm btn-danger"
+                    onClick={() => navigate("start")}
                 >
-                    <FaPencilAlt /> Edit
+                    Start
                 </button>
+                {/* </RoleView> */}
             </div>
             <hr />
             <h3><b>{quiz.title}</b></h3>

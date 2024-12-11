@@ -40,12 +40,17 @@ export const findQuizzesForCourse = async (courseId: string) => {
 };
 
 export const createQuizForCourse = async (courseId: string, quiz: Quiz) => {
-  const response = await axiosWithCredentials.post(`${COURSES_API}/${courseId}/quizzes`, quiz);
-  if (!isQuiz(response.data)) {
-    console.log(response.data);
-    return null;
+  try {
+    const response = await axiosWithCredentials.post(`${COURSES_API}/${courseId}/quizzes`, quiz);
+    if (!isQuiz(response.data)) {
+      console.log(response.data);
+      return null;
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error creating quiz:", error);
+    throw error; // Rethrow the error if you want to handle it further up the call stack
   }
-  return response.data;
 };
 
 export const fetchUnenrolledCourses = async (userId: string) => {
@@ -113,9 +118,9 @@ export const createAssignmentForCourse = async (courseId: string, assignment: As
 };
 
 export const findUsersForCourse = async (courseId: string) => {
- const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/users`);
- if (!Array.isArray(response.data)) {
-  return null;
- }
- return response.data.filter(isUser);
+  const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/users`);
+  if (!Array.isArray(response.data)) {
+    return null;
+  }
+  return response.data.filter(isUser);
 };
