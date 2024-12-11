@@ -17,6 +17,7 @@ import { findUsersForCourse } from "./client";
 import QuizEditor from "./Quizzes/QuizEditor";
 import QuestionEditor from "./Quizzes/QuestionEditors";
 import QuizTake from "./Quizzes/QuizTake";
+import QuizResults from "./Quizzes/QuizResults";
 import { useKanbasSelector } from "../../hooks";
 
 export default function Courses({ courses }: { courses: Course[]; }) {
@@ -61,6 +62,7 @@ export default function Courses({ courses }: { courses: Course[]; }) {
             <Route path="Quizzes/:qid/edit/*" element={<QuizEditor />} />
             <Route path="Quizzes/:qid/preview" element={<QuizPreview />} />
             <Route path="Quizzes/:qid/start" element={<QuizTake />} />
+            <Route path="Quizzes/:qid/results" element={<QuizResults />} />
             <Route path="People" element={<PeopleTable users={users} />} />
           </Routes>
         </div>
