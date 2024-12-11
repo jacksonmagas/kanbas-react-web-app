@@ -54,6 +54,7 @@ export default function QuizEditor() {
         type: QuizType.GRADED,
         group: AssignmentGroup.QUIZZES,
         shuffleAnswers: false,
+        timeLimitEnabled: false,
         timeLimit: 20,
         attempts: 1,
         assignTo: "Everyone",

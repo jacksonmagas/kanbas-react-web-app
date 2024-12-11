@@ -4,13 +4,12 @@ import GreenCheckmark from "../Modules/GreenCheckmark";
 import { AssignmentGroup, Quiz, QuizType } from "./quizzesReducer";
 
 export default function DetailsEditor({quiz, setQuiz } : {quiz: Quiz, setQuiz : (quiz: Quiz) => void}) {
-  const [multipleAttempts, setMultipleAttempts] = useState(false);
   return quiz ? (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center">
         <h2>Quiz</h2>
         <div className="text-end">
-          <h3>Points {quiz.questions ? quiz.questions.length : 0}</h3>
+          <h3>Points {quiz.points}</h3>
           {quiz.published === false ? (
             <h5><MdUnpublished className="text-danger" /> Not Published </h5>
           ) : (
@@ -67,7 +66,7 @@ export default function DetailsEditor({quiz, setQuiz } : {quiz: Quiz, setQuiz : 
           className="form-control border-secondary"
           id="assignmentGroup"
           value={quiz.group}
-          onChange={(e) => setQuiz({ ...quiz, group: parseInt(e.target.value) })}>
+          onChange={(e) => setQuiz({ ...quiz, group: Number(e.target.value) })}>
           <option value={AssignmentGroup.ASSIGNMENTS}>Assignments</option>
           <option value={AssignmentGroup.QUIZZES}>Quizzes</option>
           <option value={AssignmentGroup.EXAMS}>Exams</option>
@@ -102,37 +101,52 @@ export default function DetailsEditor({quiz, setQuiz } : {quiz: Quiz, setQuiz : 
               type="checkbox"
               className="form-check-input border-secondary"
               id="timeLimit"
-            />
+              defaultChecked={quiz.timeLimitEnabled}
+              onChange={e => setQuiz({...quiz, timeLimitEnabled: e.target.checked})}/>
             <label
               className="form-check-label me-2 ms-2"
-              htmlFor="timeLimit"
-            >
+              htmlFor="timeLimit">
               Time Limit
             </label>
-            <input
+            {quiz.timeLimitEnabled && <input
               type="number"
               className="form-control border-secondary"
               id="timeLimitMinutes"
-              value={quiz.timeLimit}
-              onChange={(e) => setQuiz({ ...quiz, timeLimit: parseInt(e.target.value) })}
+              value={Math.round(quiz.timeLimit)}
+              onChange={(e) => setQuiz({ ...quiz, timeLimit: Number(e.target.value) })}
               style={{ width: '80px' }}
-            />
-            <span className="ms-2">Minutes</span>
+            />}
+            {quiz.timeLimitEnabled && <span className="ms-2">Minutes</span>}
           </div>
 
           {/* Allow Multiple Attempts Option */}
-          <div className="form-check mt-2">
+          <div className="form-check mt-2 d-flex align-items-center">
             <input
               type="checkbox"
-              checked={multipleAttempts}
               className="form-check-input border-secondary"
               id="multipleAttempts"
-              onChange={e => setMultipleAttempts(e.target.checked)}/>
+              checked={quiz.attempts > 1}
+              onChange={e => {
+                if (!e.target.checked) {
+                  setQuiz({...quiz, attempts: 1})
+                } else {
+                  setQuiz({...quiz, attempts: 2})
+                }
+              }}/>
             <label
-              className="form-check-label"
+              className="form-check-label me-2 ms-2"
               htmlFor="multipleAttempts">
               Allow Multiple Attempts
             </label>
+            {quiz.attempts > 1 && <input
+              type="number"
+              className="form-control border-secondary"
+              id="numberOfAttempts"
+              value={quiz.attempts}
+              onChange={(e) => setQuiz({ ...quiz, attempts: Number(e.target.value) })}
+              style={{ width: '80px' }}
+            />}
+            {quiz.attempts > 1 && <span className="ms-2">Attempts</span>}
           </div>
         </div>
       </div>
