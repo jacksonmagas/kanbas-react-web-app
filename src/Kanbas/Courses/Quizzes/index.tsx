@@ -15,14 +15,14 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 
 export default function Quizzes() {
   const { cid } = useParams();
-  const { quizzes } = useKanbasSelector(state => state.quizzesReducer); 
+  const { quizzes } = useKanbasSelector(state => state.quizzesReducer);
   const { currentView } = useKanbasSelector(s => s.viewReducer);
   const dispatch = useKanbasDispatch();
   const navigate = useNavigate();
 
   const fetchQuizzes = async (search?: string) => {
     if (!cid || !currentView) return;
-    const base = search ? {courseId: cid, search: search} : {courseId: cid};
+    const base = search ? { courseId: cid, search: search } : {courseId: cid};
     const quizzes = currentView === "STUDENT"
       ? await coursesClient.findQuizzesForCourse({...base, published: true})
       : await coursesClient.findQuizzesForCourse(base);

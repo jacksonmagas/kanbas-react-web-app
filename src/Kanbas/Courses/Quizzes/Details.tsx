@@ -29,14 +29,14 @@ export default function Details() {
                         <FaPencilAlt /> Edit
                     </button>
                 </RoleView>
-                {/* <RoleView role="STUDENT"> */}
-                <button
-                    className="btn btn-primary btn-sm btn-danger"
-                    onClick={() => navigate("start")}
-                >
-                    Start
-                </button>
-                {/* </RoleView> */}
+                <RoleView role="STUDENT">
+                    <button
+                        className="btn btn-primary btn-sm btn-danger"
+                        onClick={() => navigate("start")}
+                    >
+                        Start
+                    </button>
+                </RoleView>
             </div>
             <hr />
             <h3><b>{quiz.title}</b></h3>
