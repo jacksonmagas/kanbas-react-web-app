@@ -3,7 +3,6 @@ import { RiErrorWarningLine } from "react-icons/ri";
 import { MdArrowRight } from "react-icons/md";
 import { FaPencilAlt } from "react-icons/fa";
 import { RxQuestionMarkCircled } from "react-icons/rx";
-
 import { useNavigate, useParams } from "react-router-dom";
 import { QuestionType, QuizQuestion } from './QuestionEditors';
 import { AssignmentGroup, QuizType } from './quizzesReducer';
@@ -12,101 +11,8 @@ import { isTrueFalseAnswer } from './QuestionEditors/TrueFalseQuestionEditor';
 import { useKanbasSelector } from '../../../hooks';
 import { isFillInTheBlankAnswer } from './QuestionEditors/FillInTheBlankEditor';
 
-
-
-export interface Quiz {
-    _id: string,
-    instructions: string,
-    title: string,
-    type: QuizType,
-    group: AssignmentGroup,
-    points: number,
-    status: string,
-    shuffleAnswers: boolean,
-    timeLimit: number,
-    attempts: string,
-    showAnswers: string,
-    questions: QuizQuestion[],
-    due: string,
-    availableFrom: string,
-    availableUntil: string,
-    publish: boolean,
-
-}
-// const quizzes: Quiz[] = [
-//     {
-//         _id: "123",
-//         instructions: "description",
-//         title: "Q1 - HTML",
-//         status: "closed",
-//         points: 2,
-//         type: QuizType.GRADED,
-//         group: AssignmentGroup.QUIZZES,
-//         shuffleAnswers: true,
-//         timeLimit: 20,
-//         attempts: "1",
-//         showAnswers: "After submission",
-//         questions: [
-//             {
-//                 _id: "0",
-//                 title: "foo",
-//                 pts: 5,
-//                 type: QuestionType.TRUE_FALSE,
-//                 question: "is water wet",
-//                 answer: {
-//                     correctAnswer: false
-//                 }
-//             },
-//             {
-//                 _id: "1",
-//                 title: "whatever",
-//                 pts: 10,
-//                 type: QuestionType.MULTIPLE_CHOICE,
-//                 question: "what is 2+2",
-//                 answer: {
-//                     answers: [
-//                         {
-//                             text: "3",
-//                             correct: false
-//                         },
-//                         {
-//                             text: "4",
-//                             correct: true
-//                         }
-//                     ]
-//                 }
-//             },
-//             {
-//                 _id: "2",
-//                 title: "whatever",
-//                 pts: 10,
-//                 type: QuestionType.FILL_IN_THE_BLANK,
-//                 question: "what is 2+2",
-//                 answer: {
-//                     answers: [
-//                         {
-//                             text: "3",
-//                             caseSensitive: false
-//                         },
-//                         {
-//                             text: "4",
-//                             caseSensitive: true
-//                         }
-//                     ]
-//                 }
-//             }
-//         ],
-//         due: "232",
-//         availableFrom: "232",
-//         availableUntil: "232",
-//         publish: true,
-//     }
-// ];
-
-
 export default function QuizPreview() {
     const { quizzes } = useKanbasSelector(s => s.quizzesReducer);
-
     const navigate = useNavigate();
     const [userAnswers, setUserAnswers] = useState<string[]>([]);
     const { qid } = useParams();
@@ -114,6 +20,7 @@ export default function QuizPreview() {
     const [startTime, setStartTime] = useState<string>("");
     const [score, setScore] = useState<number | null>(null);
     const [results, setResults] = useState<{ questionId: string; userAnswer: string; correctAnswer: string }[]>([]);
+
 
     useEffect(() => {
         const now = new Date();

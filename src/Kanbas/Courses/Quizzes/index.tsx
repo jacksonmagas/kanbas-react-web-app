@@ -1,22 +1,26 @@
 import { BsGripVertical, BsPlus } from "react-icons/bs";
 import { TiArrowSortedDown } from "react-icons/ti";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { IoEllipsisVertical } from "react-icons/io5";
 import QuizIcon from "./QuizIcon";
 import { MdUnpublished } from "react-icons/md";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 import { useKanbasDispatch, useKanbasSelector } from "../../../hooks";
-import { setQuizzes, updateQuiz } from "./quizzesReducer";
+import { Quiz, setQuizzes, updateQuiz } from "./quizzesReducer";
 import * as coursesClient from "../client"
 import * as quizClient from "./client"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { RoleView } from "../../Account/RoleShownContent";
 import { FaMagnifyingGlass } from "react-icons/fa6";
+import { QuizAttempt } from "./QuizTake";
+import { answerEq } from "./QuestionEditors";
 
 export default function Quizzes() {
   const { cid } = useParams();
   const { quizzes } = useKanbasSelector(state => state.quizzesReducer);
   const { currentView } = useKanbasSelector(s => s.viewReducer);
+  const { currentUser } = useKanbasSelector(s => s.accountReducer);
+  const [quizStatus, setQuizStatus] = useState<string[]>([])
   const dispatch = useKanbasDispatch();
   const navigate = useNavigate();
 
@@ -44,9 +48,47 @@ export default function Quizzes() {
     await quizClient.deleteQuiz(id)
   }
 
+  const fetchAttempts = async (qid: string | undefined) => {
+      if (!currentUser || !qid) return;
+      const attempts = await quizClient.findQuizAttempts(currentUser._id, qid)
+      if (attempts && attempts.length > 0) {
+        return attempts;
+      }
+  }
+
   useEffect(() => {
     fetchQuizzes();
+    Promise.all(quizzes.map(q => getQuizStatus(q))).then(r => setQuizStatus(r))
   }, [currentView]);
+
+  async function getQuizStatus(quiz: Quiz) {
+    const attempts = await fetchAttempts(quiz._id)
+    const now = new Date();
+    const start = new Date(quiz.availableFrom);
+    const end = new Date(quiz.availableUntil);
+    if (now < start) {
+      return `Not available until ${quiz.availableFrom.slice(0, 10)}`
+    } else if (attempts && attempts.length > 0) {
+      const lastAttempt = attempts[attempts.length - 1]
+      const score = quiz?.questions
+                        .reduce((score, q) => answerEq(lastAttempt.answers.find(a => a.question === q._id)?.answer ?? "", q.answer)
+                            ? score + q.pts
+                            : score, 0)
+      const attemptsLeft = attempts.length < quiz.attempts ? `, ${quiz.attempts - attempts.length} ${quiz.attempts - attempts.length === 1
+            ? "attempt"
+            : "attempts"} left`
+          : "";
+      return `Completed: score ${score} pts${attemptsLeft}`
+    } else if (now < end) {
+      const attemptsLeft = attempts && attempts.length < quiz.attempts ? `, ${quiz.attempts - attempts.length} ${quiz.attempts - attempts.length === 1
+            ? "attempt"
+            : "attempts"} left`
+          : "";
+      return `Available${attemptsLeft}`
+    } else {
+      return "Closed"
+    }
+  }
 
   return (
     <div className="ms-1">
@@ -86,7 +128,8 @@ export default function Quizzes() {
               {quizzes.length === 0 ? (
                 <p className="text-center"><b>Add a quiz!</b></p>
               ) : (
-                quizzes.map(quiz => (
+                quizzes.map((quiz, index) => {
+                  return (
                   <li key={quiz._id} className="wd-quizzes-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
                     <div className="d-flex align-items-center">
                       <RoleView role="FACULTY">
@@ -109,7 +152,7 @@ export default function Quizzes() {
                         </RoleView>
                         <RoleView role="STUDENT" loose>
                           <p className="mb-0">
-                            <b>{"Not Started"}</b> | <b>Due</b> {`${new Date(quiz.due).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                            <b>{quizStatus[index]}</b> | <b>Due</b> {`${new Date(quiz.due).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                             | ${quiz.points} pts | ${quiz.questions.length} ${quiz.questions.length == 1 ? "Question" : "Questions"}`}
                           </p>
                         </RoleView>
@@ -138,7 +181,7 @@ export default function Quizzes() {
                       </RoleView>
                     </div>
                   </li>
-                ))
+                )})
               )}
             </ul>
           </li>

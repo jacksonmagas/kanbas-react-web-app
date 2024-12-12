@@ -19,6 +19,16 @@ export interface QuizQuestion {
   answer: TrueFalseAnswer | MultipleChoiceAnswers | FillInTheBlankAnswers
 }
 
+export function answerEq(other: string, answer: TrueFalseAnswer | MultipleChoiceAnswers | FillInTheBlankAnswers) {
+  if (isTrueFalseAnswer(answer)) {
+    return answer.correctAnswer ? other === "True" : other === "False";
+  } else if (isMultipleChoiceAnswer(answer)) {
+    return answer.answers.some(a => a.text === other && a.correct);
+  } else {
+    return answer.answers.some(a => a.text === other);
+  }
+}
+
 export function isQuizQuestion(obj: unknown): obj is QuizQuestion {
   if (typeof obj !== 'object' || obj === null) {
     return false;

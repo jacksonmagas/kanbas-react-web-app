@@ -7,6 +7,15 @@ export enum QuizType {
     UNGRADED = 1
 }
 
+export function quizTypeName(val: QuizType) {
+    switch (val) {
+        case QuizType.GRADED:
+            return "Graded"
+        case QuizType.UNGRADED:
+            return "Ungraded"
+    }
+}
+
 function isQuizType(obj: unknown): obj is QuizType {
     return Object.values(QuizType).includes(obj as QuizType)
 }
@@ -17,6 +26,19 @@ export enum AssignmentGroup {
     QUIZZES = 1,
     EXAMS = 2,
     PROJECTS = 3
+}
+
+export function assignmentGroupName(val: AssignmentGroup) {
+    switch (val) {
+        case AssignmentGroup.ASSIGNMENTS:
+            return "Assignments"
+        case AssignmentGroup.QUIZZES:
+            return "Quizzes"
+        case AssignmentGroup.EXAMS:
+            return "Exams"
+        case AssignmentGroup.PROJECTS:
+            return "Projects"
+    }
 }
 
 function isAssignmentGroup(obj: unknown): obj is AssignmentGroup {

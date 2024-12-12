@@ -5,7 +5,7 @@ import { MdArrowRight } from "react-icons/md";
 import { FaPencilAlt } from "react-icons/fa";
 import { RxQuestionMarkCircled } from "react-icons/rx";
 import { useNavigate, useParams } from "react-router-dom";
-import { QuestionType, QuizQuestion } from './QuestionEditors';
+import { answerEq, QuestionType, QuizQuestion } from './QuestionEditors';
 import { AssignmentGroup, QuizType } from './quizzesReducer';
 import { isMultipleChoiceAnswer } from './QuestionEditors/MultipleChoiceEditor';
 import { isTrueFalseAnswer, TrueFalseAnswer } from './QuestionEditors/TrueFalseQuestionEditor';
@@ -21,7 +21,6 @@ export default function QuizResults() {
     const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
     const [startTime, setStartTime] = useState<string>("");
     const location = useLocation();
-    const score = location.state?.totalScore; // Retrieve score from state
     const { qid } = useParams();
     const quiz = quizzes.find(q => q._id === qid);
     const totalPoints = quiz ? quiz.questions.reduce((total, question) => total + question.pts, 0) : 0;
@@ -33,7 +32,7 @@ export default function QuizResults() {
         if (!currentUser || !qid) return;
         const attempts = await quizClient.findQuizAttempts(currentUser._id, qid)
         if (attempts && attempts.length > 0) {
-            setUserAnswers(attempts[0].answers);
+            setUserAnswers(attempts[attempts.length - 1].answers);
         }
     }
 
@@ -55,10 +54,11 @@ export default function QuizResults() {
         <div>
             <div>
                 <h2>Quiz Results</h2>
-                {score !== undefined ? (
-                    <p>Your score: {score} / {totalPoints}</p>
-                ) : (
-                    <p>No score available.</p>
+                {(
+                    <p>Your score: {quiz?.questions
+                        .reduce((score, q) => answerEq(userAnswers.find(a => a.question === q._id)?.answer ?? "", q.answer)
+                            ? score + q.pts
+                            : score, 0)} / {totalPoints}</p>
                 )}
             </div>
 
@@ -141,9 +141,9 @@ export default function QuizResults() {
                     {quiz?.questions[currentQuestionIndex]?.type === QuestionType.TRUE_FALSE && (
                         <div>
                             <p className={isTrueFalseAnswer(quiz.questions[currentQuestionIndex].answer) &&
-                                (results[currentQuestionIndex]?.userAnswer.toLowerCase() ===
+                                (userAnswers.find(a => a.question == quiz.questions[currentQuestionIndex]._id)?.answer.toLowerCase() ===
                                     String((quiz.questions[currentQuestionIndex].answer as TrueFalseAnswer).correctAnswer).toLowerCase()) ? "text-success" : "text-danger"}>
-                                You Chose: {results[currentQuestionIndex]?.userAnswer || 'No answer'}
+                                You Chose: {userAnswers.find(a => a.question == quiz.questions[currentQuestionIndex]._id)?.answer || 'No answer'}
                             </p>
                             <p className={"text-success"}>
                                 Correct Answer: {isTrueFalseAnswer(quiz.questions[currentQuestionIndex].answer) ? (quiz.questions[currentQuestionIndex].answer.correctAnswer ? "True" : "False") : "N/A"}
@@ -152,8 +152,8 @@ export default function QuizResults() {
                     )}
                     {quiz?.questions[currentQuestionIndex]?.type === QuestionType.MULTIPLE_CHOICE && (
                         <div>
-                            <p className={isMultipleChoiceAnswer(quiz.questions[currentQuestionIndex].answer) && (results[currentQuestionIndex]?.userAnswer === quiz.questions[currentQuestionIndex].answer.answers.find(answer => answer.correct)?.text) ? "text-success" : "text-danger"}>
-                                You Chose: {results[currentQuestionIndex]?.userAnswer || 'No answer'}
+                            <p className={isMultipleChoiceAnswer(quiz.questions[currentQuestionIndex].answer) && (userAnswers.find(a => a.question == quiz.questions[currentQuestionIndex]._id)?.answer === quiz.questions[currentQuestionIndex].answer.answers.find(answer => answer.correct)?.text) ? "text-success" : "text-danger"}>
+                                You Chose: {userAnswers.find(a => a.question == quiz.questions[currentQuestionIndex]._id)?.answer || 'No answer'}
                             </p>
                             <p className={"text-success"}>
                                 Correct Answer: {isMultipleChoiceAnswer(quiz.questions[currentQuestionIndex].answer) && quiz.questions[currentQuestionIndex].answer.answers.find(answer => answer.correct)?.text}
@@ -162,8 +162,8 @@ export default function QuizResults() {
                     )}
                     {quiz?.questions[currentQuestionIndex]?.type === QuestionType.FILL_IN_THE_BLANK && (
                         <div>
-                            <p className={isFillInTheBlankAnswer(quiz.questions[currentQuestionIndex].answer) && quiz.questions[currentQuestionIndex]?.answer.answers.map(answer => answer.text).join(', ').toLowerCase().includes(results[currentQuestionIndex]?.userAnswer.toLowerCase()) ? "text-success" : "text-danger"}>
-                                You Chose: {results[currentQuestionIndex]?.userAnswer || 'No answer'}
+                            <p className={isFillInTheBlankAnswer(quiz.questions[currentQuestionIndex].answer) && quiz.questions[currentQuestionIndex]?.answer.answers.map(answer => answer.text).join(', ').toLowerCase().includes(userAnswers.find(a => a.question == quiz.questions[currentQuestionIndex]._id)?.answer.toLowerCase() ?? "") ? "text-success" : "text-danger"}>
+                                You Chose: {userAnswers.find(a => a.question == quiz.questions[currentQuestionIndex]._id)?.answer || 'No answer'}
                             </p>
                             <p className='text-success'>Correct Answer: {isFillInTheBlankAnswer(quiz.questions[currentQuestionIndex].answer) && quiz.questions[currentQuestionIndex].answer.answers.map(answer => answer.text).join(', ')}</p>
                         </div>
