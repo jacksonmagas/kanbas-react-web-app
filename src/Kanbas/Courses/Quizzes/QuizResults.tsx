@@ -12,15 +12,16 @@ import { isTrueFalseAnswer, TrueFalseAnswer } from './QuestionEditors/TrueFalseQ
 import { useKanbasSelector } from '../../../hooks';
 import { isFillInTheBlankAnswer } from './QuestionEditors/FillInTheBlankEditor';
 import { RoleView } from '../../Account/RoleShownContent';
-
+import * as quizClient from "./client"
+import { Answer } from './QuizTake';
 
 export default function QuizResults() {
     const { quizzes } = useKanbasSelector(s => s.quizzesReducer);
-    const [userAnswers, setUserAnswers] = useState<string[]>([]);
+    const { currentUser } = useKanbasSelector(s => s.accountReducer);
+    const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
     const [startTime, setStartTime] = useState<string>("");
     const location = useLocation();
     const score = location.state?.totalScore; // Retrieve score from state
-    const results = location.state?.results; // Retrieve results from state
     const { qid } = useParams();
     const quiz = quizzes.find(q => q._id === qid);
     const totalPoints = quiz ? quiz.questions.reduce((total, question) => total + question.pts, 0) : 0;
@@ -28,9 +29,18 @@ export default function QuizResults() {
     const navigate = useNavigate();
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
+    const fetchAttempt = async () => {
+        if (!currentUser || !qid) return;
+        const attempts = await quizClient.findQuizAttempts(currentUser._id, qid)
+        if (attempts && attempts.length > 0) {
+            setUserAnswers(attempts[0].answers);
+        }
+    }
+
     useEffect(() => {
         const now = new Date();
         const options: Intl.DateTimeFormatOptions = { month: 'short', hour: 'numeric', day: 'numeric', minute: 'numeric', hour12: true };
+        fetchAttempt()
         setStartTime(now.toLocaleString('en-US', options));
     }, []);
 

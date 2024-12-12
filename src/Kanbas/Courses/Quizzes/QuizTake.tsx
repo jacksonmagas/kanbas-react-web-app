@@ -12,9 +12,13 @@ import { isTrueFalseAnswer } from './QuestionEditors/TrueFalseQuestionEditor';
 import { useKanbasSelector } from '../../../hooks';
 import { isFillInTheBlankAnswer } from './QuestionEditors/FillInTheBlankEditor';
 
-interface Answer {
+export interface Answer {
     question: string,
     answer: string
+}
+
+export function isAnswer(obj: any): obj is Answer {
+    return obj && typeof (obj as Answer).answer === "string" && typeof (obj as Answer).question === "string";
 }
 
 export interface QuizAttempt {
@@ -22,6 +26,11 @@ export interface QuizAttempt {
     user: string,
     answers: Answer[]
 }
+
+export function isQuizAttempt(obj: any): obj is QuizAttempt {
+    return obj && typeof obj.quiz === "string" && typeof obj.user === "string" && Array.isArray(obj.answers) && obj.answers.every(isAnswer);
+}
+
 
 export default function QuizTake() {
     const { quizzes } = useKanbasSelector(s => s.quizzesReducer);

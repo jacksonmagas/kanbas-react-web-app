@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Quiz } from "./quizzesReducer";
-import { QuizAttempt } from "./QuizTake";
+import { isQuizAttempt, QuizAttempt } from "./QuizTake";
 const axiosWithCredentials = axios.create({ withCredentials: true });
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
 const QUIZZES_API = `${REMOTE_SERVER}/api/quizzes`;
@@ -18,6 +18,9 @@ export const deleteQuiz = async (quizId: string) => {
 
 export const createQuizAttempt = async (quizAttempt: QuizAttempt) => {
     const { data } = await axiosWithCredentials.post(`${QUIZ_ATTEMPTS_API}`, quizAttempt);
+    if (!isQuizAttempt(data)) {
+        return null
+    }
     return data;
 }
 
@@ -28,5 +31,8 @@ export const deleteQuizAttempt = async (attemptId: string) => {
 
 export const findQuizAttempts = async (uid: string, qid: string) => {
     const response = await axiosWithCredentials.get(`${QUIZ_ATTEMPTS_API}/${uid}/${qid}`);
-    return response.data
+    if (!Array.isArray(response.data)) {
+        return null
+    }
+    return response.data.filter(isQuizAttempt)
 }
