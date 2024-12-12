@@ -32,6 +32,7 @@ export default function Quizzes() {
       : await coursesClient.findQuizzesForCourse(base);
     if (quizzes) {
       dispatch(setQuizzes(quizzes));
+      Promise.all(quizzes.map(q => getQuizStatus(q))).then(r => setQuizStatus(r))
     }
   }
 
@@ -46,6 +47,7 @@ export default function Quizzes() {
 
   const deleteQuiz = async (id: string) => {
     await quizClient.deleteQuiz(id)
+    fetchQuizzes();
   }
 
   const fetchAttempts = async (qid: string | undefined) => {
@@ -58,7 +60,6 @@ export default function Quizzes() {
 
   useEffect(() => {
     fetchQuizzes();
-    Promise.all(quizzes.map(q => getQuizStatus(q))).then(r => setQuizStatus(r))
   }, [currentView]);
 
   async function getQuizStatus(quiz: Quiz) {
