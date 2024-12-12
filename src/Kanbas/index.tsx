@@ -53,7 +53,7 @@ export default function Kanbas() {
     try {
       const courses = await userClient.findCoursesForUser(currentUser._id);
       if (courses) {
-        setCourses(courses);
+        setCourses(courses.map(c => ({ ...c, enrolled: true})));
       }
     } catch (error) {
       console.error(error);
@@ -87,7 +87,7 @@ export default function Kanbas() {
       );
       if (allCourses && enrolledCourses) {
         const courses = allCourses.map(course => {
-          if (enrolledCourses.find(c => c._id === course._id)) {
+          if (enrolledCourses.some(c => c._id === course._id)) {
             return { ...course, enrolled: true };
           } else {
             return course;
